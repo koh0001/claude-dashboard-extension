@@ -80,6 +80,20 @@
 - タスク完了・エージェント参加/離脱イベントを **Slack / Discord** に通知
 - `ccFlowMonitor.webhookUrl` に URL を設定するだけで有効化
 
+### スクリーンショット
+
+| Overview | タスク | メッセージ |
+|----------|--------|------------|
+| ![Overview](images/screenshots/overview-ja.png) | ![Tasks](images/screenshots/tasks-ja.png) | ![Messages](images/screenshots/messages-ja.png) |
+
+| 依存関係 | タイムライン | メトリクス |
+|----------|--------------|------------|
+| ![Deps](images/screenshots/deps-ja.png) | ![Timeline](images/screenshots/timeline-ja.png) | ![Metrics](images/screenshots/metrics-ja.png) |
+
+| アクティビティ |
+|----------------|
+| ![Activity](images/screenshots/activity-ja.png) |
+
 ---
 
 ## インストール

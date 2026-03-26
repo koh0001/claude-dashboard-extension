@@ -163,7 +163,11 @@
         },
         "ccFlowMonitor.timeFormat": {
           "type": "string",
-          "enum": ["HH:MM:SS", "HH:MM", "MM:SS"],
+          "enum": [
+            "HH:MM:SS",
+            "HH:MM",
+            "MM:SS"
+          ],
           "default": "HH:MM:SS",
           "enumDescriptions": [
             "시:분:초 (14:30:25)",
@@ -183,13 +187,13 @@
     "test:run": "vitest run",
     "lint": "eslint src/"
   },
-  "dependencies": {},
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@types/vscode": "^1.90.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
     "eslint": "^9.0.0",
+    "playwright": "^1.58.2",
     "tsup": "^8.0.0",
     "typescript": "^5.6.0",
     "vitest": "^2.0.0"

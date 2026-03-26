@@ -77,6 +77,20 @@
 - 触发时机：任务完成、Agent 加入 / 离开
 - 通过 `ccFlowMonitor.webhookUrl` 配置地址
 
+### 截图
+
+| Overview | 任务 | 消息 |
+|----------|------|------|
+| ![Overview](images/screenshots/overview-zh.png) | ![Tasks](images/screenshots/tasks-zh.png) | ![Messages](images/screenshots/messages-zh.png) |
+
+| 依赖图 | 时间线 | 指标 |
+|--------|--------|------|
+| ![Deps](images/screenshots/deps-zh.png) | ![Timeline](images/screenshots/timeline-zh.png) | ![Metrics](images/screenshots/metrics-zh.png) |
+
+| 活动动态 |
+|----------|
+| ![Activity](images/screenshots/activity-zh.png) |
+
 ---
 
 ## 安装

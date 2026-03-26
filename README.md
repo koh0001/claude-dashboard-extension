@@ -58,7 +58,19 @@ Claude Flow Monitor is a standalone VS Code extension that tracks Claude Code ac
 
 | Dashboard Overview | Kanban Tasks | Timeline |
 |--------------------|--------------|----------|
-| ![Overview](images/screenshot-overview.png) | ![Tasks](images/screenshot-tasks.png) | ![Timeline](images/screenshot-timeline.png) |
+### Screenshots
+
+| Overview | Tasks | Messages |
+|----------|-------|----------|
+| ![Overview](images/screenshots/overview-en.png) | ![Tasks](images/screenshots/tasks-en.png) | ![Messages](images/screenshots/messages-en.png) |
+
+| Dependencies | Timeline | Metrics |
+|--------------|----------|---------|
+| ![Deps](images/screenshots/deps-en.png) | ![Timeline](images/screenshots/timeline-en.png) | ![Metrics](images/screenshots/metrics-en.png) |
+
+| Activity Feed |
+|---------------|
+| ![Activity](images/screenshots/activity-en.png) |
 
 ---
 
