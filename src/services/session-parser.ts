@@ -32,16 +32,30 @@ interface SessionEntry {
   content?: unknown;
 }
 
+/** 히스토리 통계 (JSON 저장용) */
+interface ProjectStats {
+  totalTokens: TokenUsage;
+  totalActivities: number;
+  totalFileEdits: number;
+  totalCommands: number;
+  parsedFiles: string[];
+  lastUpdated: number;
+}
+
 export class SessionParserService implements vscode.Disposable {
   private watchers: fs.FSWatcher[] = [];
   private knownLines = new Map<string, number>(); // 파일별 읽은 줄 수
   private disposables: vscode.Disposable[] = [];
+  private statsPath: string | null = null;
 
   /** 누적 토큰 사용량 */
   private tokenUsage: TokenUsage = {
     inputTokens: 0, outputTokens: 0,
     cacheCreationTokens: 0, cacheReadTokens: 0, totalTokens: 0,
   };
+
+  /** 누적 활동 통계 */
+  private activityStats = { total: 0, fileEdits: 0, commands: 0 };
 
   private readonly _onActivity = new vscode.EventEmitter<ActivityItem[]>();
   readonly onActivity = this._onActivity.event;
@@ -58,9 +72,62 @@ export class SessionParserService implements vscode.Disposable {
     return { ...this.tokenUsage };
   }
 
+  /** 히스토리 통계 로드 */
+  private loadStats(sessionsDir: string): void {
+    this.statsPath = path.join(sessionsDir, 'cfm-stats.json');
+    try {
+      if (fs.existsSync(this.statsPath)) {
+        const raw = fs.readFileSync(this.statsPath, 'utf-8');
+        const saved: ProjectStats = JSON.parse(raw);
+        this.tokenUsage = { ...saved.totalTokens };
+        this.activityStats = {
+          total: saved.totalActivities || 0,
+          fileEdits: saved.totalFileEdits || 0,
+          commands: saved.totalCommands || 0,
+        };
+        // 이미 파싱한 파일 기록 복원
+        for (const f of (saved.parsedFiles || [])) {
+          this.knownLines.set(f, -1);
+        }
+      }
+    } catch {
+      // 로드 실패 무시 — 처음부터 시작
+    }
+  }
+
+  /** 히스토리 통계 저장 (debounce) */
+  private saveTimer: ReturnType<typeof setTimeout> | null = null;
+  private saveStats(): void {
+    if (!this.statsPath) return;
+    if (this.saveTimer) clearTimeout(this.saveTimer);
+    this.saveTimer = setTimeout(() => {
+      this.saveTimer = null;
+      try {
+        const stats: ProjectStats = {
+          totalTokens: { ...this.tokenUsage },
+          totalActivities: this.activityStats.total,
+          totalFileEdits: this.activityStats.fileEdits,
+          totalCommands: this.activityStats.commands,
+          parsedFiles: Array.from(this.knownLines.keys()),
+          lastUpdated: Date.now(),
+        };
+        fs.writeFileSync(this.statsPath!, JSON.stringify(stats), 'utf-8');
+      } catch {
+        // 저장 실패 무시
+      }
+    }, 2000);
+  }
+
   /** 세션 디렉토리 감시 시작 */
   watchDirectory(sessionsDir: string): void {
     if (!fs.existsSync(sessionsDir)) return;
+
+    // 히스토리 로드
+    this.loadStats(sessionsDir);
+    // 저장된 토큰이 있으면 즉시 전달
+    if (this.tokenUsage.totalTokens > 0) {
+      this._onTokenUpdate.fire({ ...this.tokenUsage });
+    }
 
     // 기존 파일 초기 스캔 (파일만 필터, 디렉토리 제외)
     try {
@@ -76,9 +143,16 @@ export class SessionParserService implements vscode.Disposable {
         const fullPath = path.join(sessionsDir, file);
         const items = this.parseFile(fullPath);
         if (items.length > 0) {
+          // 활동 통계 누적
+          for (const item of items) {
+            this.activityStats.total++;
+            if (item.type === 'file_edit') this.activityStats.fileEdits++;
+            if (item.type === 'command') this.activityStats.commands++;
+          }
           this._onActivity.fire(items.slice(-50)); // 최근 50개
         }
       }
+      this.saveStats();
     } catch {
       // 디렉토리 읽기 실패 무시
     }
@@ -203,6 +277,7 @@ export class SessionParserService implements vscode.Disposable {
           this.tokenUsage.cacheReadTokens += cacheRead;
           this.tokenUsage.totalTokens += input + output + cacheCreate;
           this._onTokenUpdate.fire({ ...this.tokenUsage });
+          this.saveStats();
         }
       }
 
@@ -216,11 +291,18 @@ export class SessionParserService implements vscode.Disposable {
   private handleFileChange(filePath: string): void {
     const items = this.parseFile(filePath);
     if (items.length > 0) {
+      for (const item of items) {
+        this.activityStats.total++;
+        if (item.type === 'file_edit') this.activityStats.fileEdits++;
+        if (item.type === 'command') this.activityStats.commands++;
+      }
       this._onActivity.fire(items);
+      this.saveStats();
     }
   }
 
   dispose(): void {
+    if (this.saveTimer) clearTimeout(this.saveTimer);
     for (const w of this.watchers) {
       try { w.close(); } catch { /* ignore */ }
     }

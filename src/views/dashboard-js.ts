@@ -784,24 +784,35 @@ export function getDashboardJs(): string {
     var grid = document.createElement('div');
     grid.className = 'cfm-metrics-grid';
 
-    // 1. 완료율 도넛
+    // 1. 완료율 또는 활동 비율 도넛
     var completionRate = 0;
     var totalTasks = 0;
     var completedTasks = 0;
-    if (snap) {
+    if (snap && snap.stats.totalTasks > 0) {
       totalTasks = snap.stats.totalTasks;
       completedTasks = snap.stats.completedTasks;
-      completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+      completionRate = Math.round((completedTasks / totalTasks) * 100);
+      grid.appendChild(createMetricDonut(t('metrics.completionRate'), completionRate, completedTasks + '/' + totalTasks, '#4caf50'));
+    } else {
+      // Agent Teams 없으면 파일 편집 비율 표시
+      var editCount = state.activities.filter(function(a) { return a.type === 'file_edit'; }).length;
+      var cmdCount = state.activities.filter(function(a) { return a.type === 'command'; }).length;
+      var totalActs = state.activities.length || 1;
+      var editPct = Math.round((editCount / totalActs) * 100);
+      grid.appendChild(createMetricDonut(t('metrics.filesChanged'), editPct, editCount + ' edits', '#4caf50'));
     }
-    grid.appendChild(createMetricDonut(t('metrics.completionRate'), completionRate, completedTasks + '/' + totalTasks, '#4caf50'));
 
-    // 2. 에이전트 활용도
-    var agentUtil = 0;
+    // 2. 에이전트 활용도 또는 커맨드 비율
     if (snap && snap.agents.length > 0) {
       var activeCount = snap.agents.filter(function(a) { return a.status === 'active'; }).length;
-      agentUtil = Math.round((activeCount / snap.agents.length) * 100);
+      var agentUtil = Math.round((activeCount / snap.agents.length) * 100);
+      grid.appendChild(createMetricDonut(t('metrics.agentUtilization'), agentUtil, snap.agents.length + ' agents', '#2196f3'));
+    } else {
+      var cmds = state.activities.filter(function(a) { return a.type === 'command'; }).length;
+      var totalA = state.activities.length || 1;
+      var cmdPct = Math.round((cmds / totalA) * 100);
+      grid.appendChild(createMetricDonut('Commands', cmdPct, cmds + ' runs', '#2196f3'));
     }
-    grid.appendChild(createMetricDonut(t('metrics.agentUtilization'), agentUtil, (snap ? snap.agents.length : 0) + ' agents', '#2196f3'));
 
     // 3. 변경 파일 수
     var fileEdits = {};
