@@ -210,7 +210,20 @@ export function activate(context: vscode.ExtensionContext): void {
   workspaceMatcher.refreshMatch().then((match) => {
     if (match) {
       outputChannel.appendLine(`[INFO] 워크스페이스 매칭 성공: ${match.claudeProjectDir}`);
-      sessionParser.watchDirectory(match.sessionsDir);
+      outputChannel.appendLine(`[INFO] 세션 디렉토리: ${match.sessionsDir}`);
+      // 활동/토큰 수신 로깅 (watchDirectory 전에 등록해야 초기 이벤트 수신)
+      sessionParser.onActivity((items) => {
+        outputChannel.appendLine(`[INFO] 활동 수신: ${items.length}개`);
+      });
+      sessionParser.onTokenUpdate((usage) => {
+        outputChannel.appendLine(`[INFO] 토큰 수신: input=${usage.inputTokens} output=${usage.outputTokens} total=${usage.totalTokens}`);
+      });
+      try {
+        sessionParser.watchDirectory(match.sessionsDir);
+        outputChannel.appendLine(`[INFO] 세션 파서 시작 완료 — 현재 활동: ${activityFeed.getItems().length}개`);
+      } catch (err) {
+        outputChannel.appendLine(`[ERROR] 세션 파서 시작 실패: ${err}`);
+      }
     } else {
       outputChannel.appendLine('[INFO] 워크스페이스 매칭 실패 — 세션 감시 미시작');
     }

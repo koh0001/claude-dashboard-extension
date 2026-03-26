@@ -146,11 +146,25 @@ export class SessionParserService implements vscode.Disposable {
         : Date.now();
       const id = `${path.basename(filePath)}-${lineNum}`;
 
-      // tool_use (도구 호출)
-      if (entry.type === 'tool_use' || entry.tool_name) {
-        const toolName = entry.tool_name || 'unknown';
-        const input = entry.tool_input || {};
+      // tool_use (도구 호출) — 두 가지 구조 지원:
+      // 1) 레거시: { type: "tool_use", tool_name: "Bash", tool_input: {...} }
+      // 2) 실제: { type: "assistant", message: { content: [{ type: "tool_use", name: "Bash", input: {...} }] } }
+      let toolName: string | null = null;
+      let input: Record<string, unknown> = {};
 
+      if (entry.type === 'tool_use' || entry.tool_name) {
+        toolName = entry.tool_name || 'unknown';
+        input = entry.tool_input || {};
+      } else if (entry.type === 'assistant' && Array.isArray(entry.message?.content)) {
+        const toolBlock = (entry.message!.content as Array<Record<string, unknown>>)
+          .find((b) => b.type === 'tool_use');
+        if (toolBlock) {
+          toolName = (toolBlock.name as string) || 'unknown';
+          input = (toolBlock.input as Record<string, unknown>) || {};
+        }
+      }
+
+      if (toolName) {
         // 파일 편집 감지
         if (toolName === 'Edit' || toolName === 'Write') {
           const file = (input.file_path as string) || (input.path as string) || '';
