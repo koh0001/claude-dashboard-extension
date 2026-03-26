@@ -108,10 +108,10 @@ export class WorkspaceMatcherService implements vscode.Disposable {
     return null;
   }
 
-  /** 경로 해시 (Claude Code 방식) */
+  /** 경로 해시 (Claude Code 방식 — 슬래시/언더스코어를 하이픈으로 치환) */
   private hashPath(absPath: string): string {
-    // Claude Code는 절대 경로를 직접 해시하여 디렉토리명으로 사용
-    return crypto.createHash('sha256').update(absPath).digest('hex').slice(0, 16);
+    // Claude Code는 절대 경로의 / 와 _ 를 -로 치환하여 디렉토리명으로 사용
+    return absPath.replace(/[/_]/g, '-');
   }
 
   /** ProjectMatch 객체 생성 */
