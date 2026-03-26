@@ -2,6 +2,18 @@
 
 All notable changes to Claude Flow Monitor will be documented in this file.
 
+## [0.4.0] - 2026-03-26
+
+### New Features
+- Workspace-based team filtering — only shows teams whose `cwd` matches current project
+- Token usage monitoring screenshots added (4 languages)
+
+### Improvements
+- Logo centered symmetric pulse, full-square rounded rect (256x256)
+- README logo size 128→180px across all 4 languages
+
+---
+
 ## [0.3.1] - 2026-03-26
 
 ### New Features

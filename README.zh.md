@@ -8,7 +8,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/VS%20Code-1.90%2B-007ACC?style=flat-square&logo=visual-studio-code" alt="VS Code" />
-  <img src="https://img.shields.io/badge/version-0.1.0-blue?style=flat-square" alt="Version" />
+  <img src="https://img.shields.io/badge/version-0.4.0-blue?style=flat-square" alt="Version" />
   <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License" />
   <img src="https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen?style=flat-square&logo=node.js" alt="Node.js" />
 </p>

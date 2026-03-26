@@ -5,7 +5,7 @@
 
   **Claude Code 워크플로우와 Agent Teams를 실시간으로 시각화하는 VS Code 확장프로그램**
 
-  [![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)](https://marketplace.visualstudio.com/items?itemName=koh-dev.claude-flow-monitor)
+  [![Version](https://img.shields.io/badge/version-0.4.0-blue.svg)](https://marketplace.visualstudio.com/items?itemName=koh-dev.claude-flow-monitor)
   [![VS Code](https://img.shields.io/badge/VS%20Code-1.90%2B-007ACC.svg)](https://code.visualstudio.com/)
   [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
   [![TypeScript](https://img.shields.io/badge/TypeScript-Strict-blue.svg)](https://www.typescriptlang.org/)
@@ -161,7 +161,7 @@ VS Code → 확장 (Ctrl+Shift+X) → ··· 메뉴 → VSIX에서 설치...
 또는 커맨드라인으로:
 
 ```bash
-code --install-extension claude-flow-monitor-0.1.0.vsix
+code --install-extension claude-flow-monitor-0.4.0.vsix
 ```
 
 ---

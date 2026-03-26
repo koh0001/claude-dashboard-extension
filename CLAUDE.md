@@ -45,7 +45,7 @@ src/
 │   ├── dashboard-css.ts   → CSS (적응형 테마 + Stitch 기반 + 반응형 + 타임라인/메트릭)
 │   └── dashboard-js.ts    → 클라이언트 JS (상태 관리, DOM 조작, 검색 필터)
 ├── i18n/
-│   ├── locales/           → ko, en, ja, zh 번역 파일 (각 80키)
+│   ├── locales/           → ko, en, ja, zh 번역 파일 (각 86키)
 │   ├── types.ts           → ExtendedTranslationMap + WEBVIEW_TRANSLATION_KEYS
 │   └── index.ts           → i18n 팩토리 (core 확장, 폴백 체인)
 └── utils/
