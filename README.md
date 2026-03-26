@@ -58,19 +58,56 @@ Claude Flow Monitor is a standalone VS Code extension that tracks Claude Code ac
 
 | Dashboard Overview | Kanban Tasks | Timeline |
 |--------------------|--------------|----------|
-### Screenshots
+### Screenshots & Feature Guide
 
-| Overview | Tasks | Messages |
-|----------|-------|----------|
-| ![Overview](images/screenshots/overview-en.png) | ![Tasks](images/screenshots/tasks-en.png) | ![Messages](images/screenshots/messages-en.png) |
+#### Overview — Agent Status at a Glance
+![Overview](images/screenshots/overview-en.png)
+- Displays all team **agents as cards** with name, model, and role
+- Shows each agent's **current task** and **completion progress** in real-time
+- Top Stats Bar summarizes total tasks, active, messages, and elapsed time
+- Lead agent marked with 👑 icon
 
-| Dependencies | Timeline | Metrics |
-|--------------|----------|---------|
-| ![Deps](images/screenshots/deps-en.png) | ![Timeline](images/screenshots/timeline-en.png) | ![Metrics](images/screenshots/metrics-en.png) |
+#### Tasks — Task Management (Table/Kanban)
+![Tasks](images/screenshots/tasks-en.png)
+- **Table view**: Sortable columns for ID, title, assignee, and status
+- **Kanban view**: 3-column board (Pending → In Progress → Completed)
+- Blocker relationships shown (`blocked by: #5, #6`)
+- **Search bar** filters by task name, assignee, or ID
 
-| Activity Feed |
-|---------------|
-| ![Activity](images/screenshots/activity-en.png) |
+#### Messages — Agent Communication
+![Messages](images/screenshots/messages-en.png)
+- Real-time **message stream** between agents (sender → receiver)
+- **Filters**: All / Conversation / System messages
+- System messages highlighted with purple border, permission requests with pink
+- Message preview up to 500 characters
+
+#### Dependencies — SVG Dependency Graph
+![Dependencies](images/screenshots/deps-en.png)
+- Visualizes task dependencies as a **DAG (Directed Acyclic Graph)**
+- **Bezier curve connections** with arrows showing blocking relationships
+- Layer-based grouping (Layer 0 → Layer 1 → Layer 2)
+- Nodes colored by status (completed=green, in-progress=orange, pending=gray)
+
+#### Activity Feed — Real-time Activity Stream
+![Activity](images/screenshots/activity-en.png)
+- Unified feed of file edits(📝), commands(⚡), task changes(✅), messages(💬)
+- Displays up to 200 recent activities chronologically
+- Searchable via the global search bar
+- Timestamps in HH:MM:SS format
+
+#### Timeline — Chronological Event Timeline
+![Timeline](images/screenshots/timeline-en.png)
+- All events displayed as a **vertical timeline**
+- **Date grouping** (Today / Earlier)
+- Color-coded dots by event type (file=blue, task=green, error=red)
+- Expandable details (file paths, commands)
+
+#### Metrics — Performance Dashboard
+![Metrics](images/screenshots/metrics-en.png)
+- **Donut charts**: Task completion rate and agent utilization
+- **Velocity chart**: Activity count by hour (last 12 hours)
+- **File heatmap**: Top 10 most edited files as horizontal bar chart
+- Summary cards for sessions, messages, and elapsed time
 
 ---
 

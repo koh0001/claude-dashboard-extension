@@ -77,19 +77,56 @@
 - 触发时机：任务完成、Agent 加入 / 离开
 - 通过 `ccFlowMonitor.webhookUrl` 配置地址
 
-### 截图
+### 截图与功能介绍
 
-| Overview | 任务 | 消息 |
-|----------|------|------|
-| ![Overview](images/screenshots/overview-zh.png) | ![Tasks](images/screenshots/tasks-zh.png) | ![Messages](images/screenshots/messages-zh.png) |
+#### Overview — 一览 Agent 状态
+![Overview](images/screenshots/overview-zh.png)
+- 以**卡片形式**展示团队中所有 Agent（名称、模型、角色）
+- 实时显示每个 Agent 的**当前任务**和**完成进度**
+- 顶部 Stats Bar 汇总任务总数、活跃数、消息数和经过时间
+- 领导 Agent 以 👑 图标标记
 
-| 依赖图 | 时间线 | 指标 |
-|--------|--------|------|
-| ![Deps](images/screenshots/deps-zh.png) | ![Timeline](images/screenshots/timeline-zh.png) | ![Metrics](images/screenshots/metrics-zh.png) |
+#### Tasks — 任务管理（表格/看板）
+![Tasks](images/screenshots/tasks-zh.png)
+- **表格视图**：可排序的 ID、任务名、负责人、状态列
+- **看板视图**：Pending → In Progress → Completed 三列看板
+- 显示阻塞关系（`blocked by: #5, #6`）
+- **搜索栏**按任务名、负责人或 ID 过滤
 
-| 活动动态 |
-|----------|
-| ![Activity](images/screenshots/activity-zh.png) |
+#### Messages — Agent 间通信
+![Messages](images/screenshots/messages-zh.png)
+- 实时展示 Agent 间的**消息流**（发送者 → 接收者）
+- **过滤器**：全部 / 对话 / 系统消息
+- 系统消息以紫色边框、权限请求以粉色边框区分
+- 消息预览最多 500 字符
+
+#### Dependencies — SVG 依赖关系图
+![Dependencies](images/screenshots/deps-zh.png)
+- 以 **DAG（有向无环图）**可视化任务间的依赖关系
+- **贝塞尔曲线连线**加箭头展示阻塞关系
+- 按层分组（Layer 0 → Layer 1 → Layer 2）
+- 节点按状态着色（完成=绿、进行中=橙、待处理=灰）
+
+#### Activity Feed — 实时活动流
+![Activity](images/screenshots/activity-zh.png)
+- 统一展示文件编辑(📝)、命令执行(⚡)、任务变更(✅)、消息(💬)
+- 按时间顺序显示最近 200 条活动
+- 支持全局搜索栏过滤活动内容
+- 时间戳格式 HH:MM:SS
+
+#### Timeline — 时间线事件视图
+![Timeline](images/screenshots/timeline-zh.png)
+- 所有事件以**纵向时间线**形式展示
+- **按日期分组**（今天 / 更早）
+- 按事件类型着色圆点（文件=蓝、任务=绿、错误=红）
+- 可展开查看详细信息（文件路径、命令等）
+
+#### Metrics — 性能指标仪表板
+![Metrics](images/screenshots/metrics-zh.png)
+- **环形图**：任务完成率和 Agent 利用率的可视化展示
+- **速度图**：按小时统计活动数量的柱状图（最近 12 小时）
+- **文件热力图**：编辑次数最多的 Top 10 文件水平柱状图
+- 会话数、消息数、经过时间汇总卡片
 
 ---
 

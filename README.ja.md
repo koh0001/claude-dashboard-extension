@@ -80,19 +80,56 @@
 - タスク完了・エージェント参加/離脱イベントを **Slack / Discord** に通知
 - `ccFlowMonitor.webhookUrl` に URL を設定するだけで有効化
 
-### スクリーンショット
+### スクリーンショット & 機能紹介
 
-| Overview | タスク | メッセージ |
-|----------|--------|------------|
-| ![Overview](images/screenshots/overview-ja.png) | ![Tasks](images/screenshots/tasks-ja.png) | ![Messages](images/screenshots/messages-ja.png) |
+#### Overview — エージェント状況を一目で確認
+![Overview](images/screenshots/overview-ja.png)
+- チーム内の全**エージェントをカード形式**で表示（名前、モデル、役割）
+- 各エージェントの**現在のタスク**と**進捗率**をリアルタイム表示
+- 上部Stats Barでタスク総数、アクティブ、メッセージ、経過時間を確認
+- リーダーエージェントは👑アイコンで区別
 
-| 依存関係 | タイムライン | メトリクス |
-|----------|--------------|------------|
-| ![Deps](images/screenshots/deps-ja.png) | ![Timeline](images/screenshots/timeline-ja.png) | ![Metrics](images/screenshots/metrics-ja.png) |
+#### Tasks — タスク管理（テーブル/カンバン）
+![Tasks](images/screenshots/tasks-ja.png)
+- **テーブルビュー**: ID、タスク名、担当者、ステータスをソート可能なテーブルで表示
+- **カンバンビュー**: Pending → In Progress → Completed の3列ボード
+- ブロッカー関係を表示（`blocked by: #5, #6`）
+- **検索バー**でタスク名、担当者、IDをフィルタリング
 
-| アクティビティ |
-|----------------|
-| ![Activity](images/screenshots/activity-ja.png) |
+#### Messages — エージェント間コミュニケーション
+![Messages](images/screenshots/messages-ja.png)
+- エージェント間の**リアルタイムメッセージストリーム**を表示
+- **フィルター**: すべて / 会話 / システムメッセージ
+- システムメッセージは紫色、権限リクエストはピンク色の左ボーダーで区別
+- メッセージ本文を最大500文字までプレビュー
+
+#### Dependencies — SVG依存関係グラフ
+![Dependencies](images/screenshots/deps-ja.png)
+- タスク間の依存関係を**DAG（有向非巡回グラフ）**で可視化
+- **ベジェ曲線**と矢印でブロッキング関係を表示
+- レイヤー別グルーピング（Layer 0 → Layer 1 → Layer 2）
+- ノードはステータスごとに色分け（完了=緑、進行中=オレンジ、保留=灰色）
+
+#### Activity Feed — リアルタイムアクティビティフィード
+![Activity](images/screenshots/activity-ja.png)
+- ファイル編集(📝)、コマンド実行(⚡)、タスク変更(✅)、メッセージ(💬)の統合フィード
+- 最大200件のアクティビティを時系列で表示
+- 検索バーでアクティビティ内容をフィルタリング可能
+- タイムスタンプはHH:MM:SS形式
+
+#### Timeline — 時系列イベントタイムライン
+![Timeline](images/screenshots/timeline-ja.png)
+- すべてのイベントを**縦型タイムライン**で可視化
+- **日付別グルーピング**（今日 / 以前）
+- イベントタイプごとの色付きドット（ファイル=青、タスク=緑、エラー=赤）
+- 詳細情報（ファイルパス、コマンドなど）を展開表示
+
+#### Metrics — パフォーマンスダッシュボード
+![Metrics](images/screenshots/metrics-ja.png)
+- **ドーナツチャート**: タスク完了率とエージェント稼働率を視覚的に表示
+- **速度チャート**: 時間帯別アクティビティ数をバーチャートで表示（直近12時間）
+- **ファイルヒートマップ**: 最も編集されたファイルTop 10を水平バーチャートで表示
+- セッション数、メッセージ数、経過時間のサマリーカード
 
 ---
 
