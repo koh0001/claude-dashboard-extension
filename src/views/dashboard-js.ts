@@ -783,8 +783,8 @@ export function getDashboardJs(): string {
 
     panel.appendChild(grid);
 
-    // 태스크 처리 속도 바 차트
-    if (state.activities.length > 0) {
+    // 태스크 처리 속도 바 차트 (활동 없어도 빈 차트 표시)
+    {
       var velocityTitle = document.createElement('h4');
       velocityTitle.textContent = t('metrics.taskVelocity');
       velocityTitle.style.margin = 'var(--cfm-space-lg) 0 var(--cfm-space-sm)';
@@ -821,15 +821,15 @@ export function getDashboardJs(): string {
       panel.appendChild(chart);
     }
 
-    // 파일 히트맵 (상위 10개)
+    // 파일 히트맵 (상위 10개, 항상 표시)
     var fileEntries = Object.keys(fileEdits).map(function(f) { return { file: f, count: fileEdits[f] }; });
     fileEntries.sort(function(a, b) { return b.count - a.count; });
-    if (fileEntries.length > 0) {
-      var hmTitle = document.createElement('h4');
-      hmTitle.textContent = t('metrics.filesChanged');
-      hmTitle.style.margin = 'var(--cfm-space-lg) 0 var(--cfm-space-sm)';
-      panel.appendChild(hmTitle);
+    var hmTitle = document.createElement('h4');
+    hmTitle.textContent = t('metrics.filesChanged');
+    hmTitle.style.margin = 'var(--cfm-space-lg) 0 var(--cfm-space-sm)';
+    panel.appendChild(hmTitle);
 
+    if (fileEntries.length > 0) {
       var heatmap = document.createElement('div');
       heatmap.className = 'cfm-heatmap';
       var hmMax = fileEntries[0].count;
@@ -855,6 +855,12 @@ export function getDashboardJs(): string {
         heatmap.appendChild(row);
       });
       panel.appendChild(heatmap);
+    } else {
+      var hmEmpty = document.createElement('div');
+      hmEmpty.className = 'cfm-empty';
+      hmEmpty.style.padding = 'var(--cfm-space-md)';
+      hmEmpty.textContent = t('metrics.noDataHint');
+      panel.appendChild(hmEmpty);
     }
   }
 
