@@ -101,6 +101,7 @@ function buildDepsLayers(tasks: Task[]): string[][] {
 export class WatcherService implements vscode.Disposable {
   private watcher: TeamWatcher;
   private disposables: vscode.Disposable[] = [];
+  private workspaceRoot: string | null = null;
 
   private readonly _onUpdate = new vscode.EventEmitter<{ teamName: string; snapshot: TeamSnapshot }>();
   readonly onUpdate = this._onUpdate.event;
@@ -114,6 +115,20 @@ export class WatcherService implements vscode.Disposable {
   constructor(options?: WatcherOptions) {
     this.watcher = new TeamWatcher(options);
     this.disposables.push(this._onUpdate, this._onRemove, this._onNotification);
+
+    // 현재 워크스페이스 경로 저장
+    const folders = vscode.workspace.workspaceFolders;
+    if (folders && folders.length > 0) {
+      this.workspaceRoot = folders[0].uri.fsPath;
+    }
+  }
+
+  /** 팀이 현재 워크스페이스에 속하는지 확인 (멤버의 cwd 기준) */
+  private isTeamInWorkspace(snapshot: TeamSnapshot): boolean {
+    if (!this.workspaceRoot) return true; // 워크스페이스 없으면 전체 표시
+    return snapshot.config.members.some((m) =>
+      m.cwd && m.cwd.startsWith(this.workspaceRoot!),
+    );
   }
 
   private started = false;
@@ -123,8 +138,9 @@ export class WatcherService implements vscode.Disposable {
     if (this.started) return;
     this.started = true;
 
-    // 이벤트 바인딩
+    // 이벤트 바인딩 (워크스페이스 필터 적용)
     this.watcher.on('snapshot:updated', (teamName: string, snapshot: TeamSnapshot) => {
+      if (!this.isTeamInWorkspace(snapshot)) return;
       this._onUpdate.fire({ teamName, snapshot });
     });
 
@@ -169,9 +185,17 @@ export class WatcherService implements vscode.Disposable {
     return this.watcher.getTeamSnapshot(teamName);
   }
 
-  /** 전체 스냅샷 맵 */
+  /** 전체 스냅샷 맵 (워크스페이스 필터 적용) */
   async getAllSnapshots(): Promise<Map<string, TeamSnapshot>> {
-    return this.watcher.getAllSnapshots();
+    const all = await this.watcher.getAllSnapshots();
+    if (!this.workspaceRoot) return all;
+    const filtered = new Map<string, TeamSnapshot>();
+    for (const [name, snap] of all) {
+      if (this.isTeamInWorkspace(snap)) {
+        filtered.set(name, snap);
+      }
+    }
+    return filtered;
   }
 
   dispose(): void {
