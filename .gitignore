@@ -1,0 +1,6 @@
+.omc/
+.claude/
+node_modules/
+dist/
+*.vsix
+.env*
