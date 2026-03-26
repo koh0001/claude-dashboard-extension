@@ -979,10 +979,14 @@ body {
 .cfm-velocity-bar {
   width: 100%;
   max-width: 24px;
-  background: rgb(var(--cfm-agent-active-base));
+  background: linear-gradient(to top, rgb(var(--cfm-agent-active-base)), rgba(var(--cfm-agent-active-base), 0.5));
   border-radius: var(--cfm-radius-sm) var(--cfm-radius-sm) 0 0;
   min-height: 2px;
   transition: height var(--cfm-transition-normal);
+}
+.cfm-velocity-bar:hover {
+  background: rgb(var(--cfm-agent-active-base));
+  box-shadow: 0 0 4px rgba(var(--cfm-agent-active-base), 0.4);
 }
 .cfm-velocity-label {
   font-size: 10px;
@@ -1019,9 +1023,12 @@ body {
 }
 .cfm-heatmap-bar {
   height: 100%;
-  background: var(--cfm-status-in-progress);
+  background: linear-gradient(to right, var(--cfm-status-in-progress), rgba(var(--cfm-status-in-progress-base), 0.5));
   border-radius: 4px;
   transition: width var(--cfm-transition-normal);
+}
+.cfm-heatmap-row:hover .cfm-heatmap-bar {
+  background: var(--cfm-status-in-progress);
 }
 .cfm-heatmap-count {
   min-width: 24px;
@@ -1046,11 +1053,15 @@ body {
   fill: none;
   stroke: var(--cfm-text-muted);
   stroke-width: 1.5;
-  opacity: 0.5;
+  opacity: 0.6;
 }
 .cfm-dag-arrow {
   fill: var(--cfm-text-muted);
-  opacity: 0.5;
+  opacity: 0.6;
+}
+.cfm-metric-card:hover {
+  border-color: var(--cfm-border-active);
+  background: var(--cfm-overlay-light);
 }
 .cfm-deps-node {
   display: flex;

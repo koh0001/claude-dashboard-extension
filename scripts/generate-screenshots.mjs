@@ -239,17 +239,40 @@ function generateHtml(tab, lang) {
       </div>`).join('')}
     </div>`;
   } else if (tab === 'deps') {
-    content = `<h3>${t.deps}</h3><div class="dag">
-      <div class="dag-layer"><div class="layer-title">Layer 0</div>
-        ${['1','2','3','4'].map(id => { const tk = tasks.find(t=>t.id===id); return `<div class="dag-node" style="border-left:3px solid ${statusColors[tk.status]}"><span class="node-id">#${id}</span><span class="node-title">${tk.title.slice(0,20)}</span></div>`; }).join('')}
+    // 노드별 DOM 기반 연결 대신, 각 노드 사이에 인라인 SVG 화살표를 삽입
+    const nodeHtml = (id) => {
+      const tk = tasks.find(t => t.id === id);
+      return `<div class="dag-node" data-id="${id}" style="border-left:3px solid ${statusColors[tk.status]}"><span class="node-id">#${id}</span><span class="node-title">${tk.title.slice(0,22)}</span></div>`;
+    };
+    const arrow = `<svg width="50" height="20" viewBox="0 0 50 20" class="dag-arrow-svg"><path d="M0 10 L40 10" stroke="#666" stroke-width="1.5" fill="none"/><polygon points="38,6 46,10 38,14" fill="#666"/></svg>`;
+    const arrowDown = `<svg width="50" height="40" viewBox="0 0 50 40" class="dag-arrow-svg"><path d="M0 0 C25 0, 25 40, 50 40" stroke="#666" stroke-width="1.5" fill="none"/><polygon points="44,37 52,40 44,43" fill="#666"/></svg>`;
+
+    content = `<h3>${t.deps}</h3>
+    <div class="dag-grid">
+      <div class="dag-col">
+        <div class="layer-title">Layer 0</div>
+        ${nodeHtml('1')}${nodeHtml('2')}${nodeHtml('3')}${nodeHtml('4')}
       </div>
-      <div class="dag-arrows">→<br>→<br>→</div>
-      <div class="dag-layer"><div class="layer-title">Layer 1</div>
-        ${['5','6','7'].map(id => { const tk = tasks.find(t=>t.id===id); return `<div class="dag-node" style="border-left:3px solid ${statusColors[tk.status]}"><span class="node-id">#${id}</span><span class="node-title">${tk.title.slice(0,20)}</span></div>`; }).join('')}
+      <div class="dag-col dag-arrows-col">
+        <div class="layer-title">&nbsp;</div>
+        <div class="dag-arrow-row">${arrow}</div>
+        <div class="dag-arrow-row">${arrow}</div>
+        <div class="dag-arrow-row" style="opacity:0">${arrow}</div>
+        <div class="dag-arrow-row">${arrow}</div>
       </div>
-      <div class="dag-arrows">→</div>
-      <div class="dag-layer"><div class="layer-title">Layer 2</div>
-        <div class="dag-node" style="border-left:3px solid ${statusColors['pending']}"><span class="node-id">#8</span><span class="node-title">${tasks[7].title.slice(0,20)}</span></div>
+      <div class="dag-col">
+        <div class="layer-title">Layer 1</div>
+        ${nodeHtml('5')}${nodeHtml('6')}${nodeHtml('7')}
+      </div>
+      <div class="dag-col dag-arrows-col">
+        <div class="layer-title">&nbsp;</div>
+        <div class="dag-arrow-row">${arrow}</div>
+        <div class="dag-arrow-row">${arrow}</div>
+        <div class="dag-arrow-row">${arrow}</div>
+      </div>
+      <div class="dag-col">
+        <div class="layer-title">Layer 2</div>
+        ${nodeHtml('8')}
       </div>
     </div>`;
   } else if (tab === 'activity') {
@@ -329,7 +352,11 @@ h4{font-size:12px;color:#999}
 .msg-header{display:flex;justify-content:space-between;font-size:11px;color:#888;margin-bottom:4px}
 .msg-from{font-weight:600;color:#e1e1e1}
 .msg-content{word-break:break-word}
-.dag{display:flex;gap:24px;overflow-x:auto;padding:8px 0;align-items:flex-start}
+.dag-grid{display:flex;align-items:flex-start;gap:0;padding:8px 0;overflow-x:auto}
+.dag-col{display:flex;flex-direction:column;gap:8px;min-width:160px}
+.dag-arrows-col{min-width:50px;align-items:center;justify-content:flex-start;padding-top:0}
+.dag-arrow-row{height:46px;display:flex;align-items:center;margin-bottom:8px}
+.dag-arrow-svg{display:block;overflow:visible}
 .dag-layer{display:flex;flex-direction:column;gap:8px;min-width:160px}
 .layer-title{font-size:11px;color:#666;text-align:center;margin-bottom:4px}
 .dag-node{padding:8px;background:#2d2d2d;border-radius:4px;border:1px solid #3c3c3c;font-size:11px;display:flex;flex-direction:column;gap:2px}
