@@ -1,106 +1,226 @@
 # Claude Flow Monitor
 
-> Claude Code 워크플로우를 실시간으로 시각화하는 VS Code 확장프로그램
+🌐 [한국어](README.ko.md) | **English** | [日本語](README.ja.md) | [中文](README.zh.md)
 
-Claude Flow Monitor는 Claude Code Agent Teams의 **진행사항, 태스크 흐름, 에이전트 활동**을 실시간으로 모니터링하는 VS Code 확장입니다. `~/.claude/` 디렉토리의 파일을 감시하여 직관적인 대시보드로 시각화합니다.
+<p align="center">
+  <img src="images/logo.png" alt="Claude Flow Monitor" width="128" />
+</p>
 
-## 주요 기능
+<p align="center">
+  <strong>Real-time visualization of Claude Code workflows and Agent Teams</strong>
+</p>
 
-**실시간 대시보드** — Overview, Tasks, Messages, Dependencies 4개 탭으로 팀 상태를 한눈에 파악합니다.
+<p align="center">
+  <a href="https://marketplace.visualstudio.com/items?itemName=koh-dev.claude-flow-monitor">
+    <img src="https://img.shields.io/visual-studio-marketplace/v/koh-dev.claude-flow-monitor?label=VS%20Code%20Marketplace&logo=visual-studio-code" alt="VS Code Marketplace" />
+  </a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License MIT" />
+  </a>
+</p>
 
-**칸반 보드** — 태스크를 Pending / In Progress / Completed 3단 칸반으로 시각화하며, 테이블 뷰와 토글할 수 있습니다.
+---
 
-**의존성 DAG 그래프** — 태스크 간 blockedBy/blocks 관계를 위상 정렬 기반 그래프로 시각화합니다.
+## Features
 
-**메시지 스레딩** — 에이전트 간 메시지를 발신자-수신자 쌍으로 그룹핑하고, All/Conversation/System 필터를 제공합니다.
+Claude Flow Monitor is a standalone VS Code extension that tracks Claude Code activity in your open workspace and surfaces it through an integrated dashboard.
 
-**VS Code 테마 적응** — 다크 모드, 라이트 모드, 고대비 모드를 자동으로 감지하여 최적화된 UI를 표시합니다.
+### Dashboard — 7 Tabs
 
-**다국어 지원** — 한국어, English, 日本語, 中文 4개 언어를 지원하며 실시간으로 전환할 수 있습니다.
+| Tab | Description |
+|-----|-------------|
+| **Overview** | Active teams, agent count, task completion rate, session summary |
+| **Tasks** | Kanban board (Table / Kanban toggle), blocker flags, task status |
+| **Messages** | Agent inbox messages in real time |
+| **Deps** | SVG-based DAG dependency graph with Bezier curve edges and arrows |
+| **Activity** | Unified feed — file edits, commands, tasks, messages (up to 200 entries) |
+| **Timeline** | Chronological event visualization with date grouping |
+| **Metrics** | Donut charts, velocity chart, file edit heatmap |
 
-## 설치
+### Additional Features
 
-### VS Code Marketplace (예정)
-```
-ext install koh-dev.claude-flow-monitor
-```
+- **Sidebar mini-dashboard** — WebviewView panel with metrics, recent activity, and quick actions
+- **Tree view** — Team → Agent → Task hierarchy in the Activity Bar sidebar
+- **Global search** — `Ctrl+F` shortcut with per-tab filtering
+- **AI file badges** — Explorer "AI" badge on files modified by Claude Code (via `FileDecorationProvider`)
+- **Git integration** — Identifies AI-authored commits via `Co-Authored-By` and tracks AI contribution
+- **Export** — Download session data as CSV or generate a Markdown summary report in an editor tab
+- **Webhooks** — Send task/agent events to Slack or Discord via HTTP POST
+- **MCP server mode** — Exposes `/api/teams`, `/api/activities`, `/api/metrics` as a local HTTP JSON API
+- **Adaptive theming** — Inherits VS Code's dark, light, high-contrast, and custom themes (Dracula, One Dark Pro, etc.)
+- **Localization** — Korean, English, Japanese, Chinese with auto-detect
 
-### 수동 설치
+---
+
+## Screenshots
+
+> Screenshots are located in the `images/` directory.
+
+| Dashboard Overview | Kanban Tasks | Timeline |
+|--------------------|--------------|----------|
+| ![Overview](images/screenshot-overview.png) | ![Tasks](images/screenshot-tasks.png) | ![Timeline](images/screenshot-timeline.png) |
+
+---
+
+## Installation
+
+### VS Code Marketplace
+
+1. Open VS Code.
+2. Go to the Extensions panel (`Ctrl+Shift+X` / `Cmd+Shift+X`).
+3. Search for **Claude Flow Monitor**.
+4. Click **Install**.
+
+Or install from the command line:
+
 ```bash
-git clone https://github.com/koh0001/claude-flow-monitor.git
-cd claude-flow-monitor
+code --install-extension koh-dev.claude-flow-monitor
+```
+
+### Manual Install (.vsix)
+
+1. Download the `.vsix` file from the [Releases](https://github.com/koh0001/claude-dashboard-extension/releases) page.
+2. In VS Code, open the Extensions panel.
+3. Click the `...` menu and select **Install from VSIX...**.
+4. Select the downloaded file.
+
+---
+
+## Quick Start
+
+1. Open any project that has Claude Code activity.
+2. Open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`).
+3. Run **Claude Flow Monitor: Open Dashboard**.
+4. The dashboard opens as a panel. Use the sidebar icon to access the mini-dashboard and tree view.
+
+The extension activates automatically on VS Code startup (`onStartupFinished`) and watches `~/.claude/` for team configs, tasks, inboxes, and session JSONL files belonging to the current workspace.
+
+---
+
+## Configuration
+
+| Setting | Type | Default | Description |
+|---------|------|---------|-------------|
+| `ccFlowMonitor.language` | `string` | `"auto"` | Dashboard language: `auto`, `ko`, `en`, `ja`, `zh` |
+| `ccFlowMonitor.notifications` | `boolean` | `true` | Enable real-time VS Code notifications |
+| `ccFlowMonitor.claudeDir` | `string` | `""` | Override the default `~/.claude/` directory path |
+| `ccFlowMonitor.webhookUrl` | `string` | `""` | Slack or Discord webhook URL for event notifications |
+| `ccFlowMonitor.mcpServerPort` | `number` | `0` | MCP HTTP server port (`0` = random available port) |
+| `ccFlowMonitor.timeFormat` | `string` | `"HH:MM:SS"` | Time display format: `HH:MM:SS`, `HH:MM`, or `MM:SS` |
+
+Settings are available under **File > Preferences > Settings > Claude Flow Monitor**, or directly in `settings.json`.
+
+---
+
+## Architecture
+
+Core file-watching and parsing logic is provided by the `@cc-team-viewer/core` npm package. The extension wraps it with VS Code lifecycle management and a WebView-based dashboard UI.
+
+```
+src/
+├── extension.ts                      # Entry point (activate / deactivate)
+├── services/
+│   ├── watcher-service.ts            # Wraps core TeamWatcher (VS Code lifecycle)
+│   ├── workspace-matcher.ts          # SHA-256 hash matching for workspace ↔ project
+│   ├── session-parser.ts             # JSONL session file parser
+│   ├── git-service.ts                # Co-Authored-By commit parsing
+│   ├── export-service.ts             # CSV / Markdown export
+│   ├── webhook-service.ts            # Slack / Discord webhook POST
+│   ├── mcp-service.ts                # MCP server and .mcp.json parsing
+│   └── i18n-service.ts               # Extension i18n manager
+├── providers/
+│   ├── dashboard-provider.ts         # WebView panel (message queue, max 100)
+│   ├── tree-provider.ts              # Sidebar tree view
+│   ├── activity-feed-provider.ts     # Activity feed aggregator (max 200)
+│   ├── file-decoration-provider.ts   # AI file badges
+│   └── sidebar-dashboard-provider.ts # Sidebar mini-dashboard (WebviewView)
+├── views/
+│   ├── dashboard-html.ts             # HTML template (nonce CSP, 7 tabs + search bar)
+│   ├── dashboard-css.ts              # Adaptive theme CSS
+│   └── dashboard-js.ts               # Client-side state and DOM logic
+├── i18n/
+│   ├── locales/                      # ko, en, ja, zh translation files (80 keys each)
+│   ├── types.ts                      # ExtendedTranslationMap
+│   └── index.ts                      # i18n factory with fallback chain
+└── utils/
+    ├── escape-html.ts                # XSS prevention
+    └── theme-detector.ts             # Theme mode detection
+```
+
+### Data Flow
+
+```
+File change  → core TeamWatcher → WatcherService → DashboardProvider → WebView
+Workspace    → WorkspaceMatcher (SHA-256) → SessionParser → ActivityFeedProvider → WebView
+Git repo     → GitService (Co-Authored-By) → FileDecorationProvider → Explorer badges
+Notification → WatcherService → WebhookService → Slack / Discord
+Export       → ExportService → CSV file / Markdown editor tab
+MCP          → McpService → HTTP JSON API (localhost)
+```
+
+---
+
+## Supported Languages
+
+| Language | Code | README |
+|----------|------|--------|
+| Korean | `ko` | [README.ko.md](README.ko.md) |
+| English | `en` | This file |
+| Japanese | `ja` | [README.ja.md](README.ja.md) |
+| Chinese | `zh` | [README.zh.md](README.zh.md) |
+
+The UI language is auto-detected from VS Code's display language. Override with the `ccFlowMonitor.language` setting.
+
+---
+
+## Development
+
+### Prerequisites
+
+- Node.js 20+
+- VS Code 1.90+
+
+### Setup
+
+```bash
+git clone https://github.com/koh0001/claude-dashboard-extension.git
+cd claude-dashboard-extension
 npm install
-npm run build
-npm run package
-# 생성된 .vsix 파일을 VS Code에서 설치
 ```
 
-## 사용법
-
-1. VS Code에서 Activity Bar의 망원경 아이콘을 클릭합니다
-2. 사이드바에서 팀 목록을 확인합니다
-3. 팀을 선택하면 대시보드가 열립니다
-4. 탭을 전환하여 Overview / Tasks / Messages / Deps를 확인합니다
-
-### 커맨드
-
-| 커맨드 | 설명 |
-|--------|------|
-| `Claude Flow Monitor: Open Dashboard` | 대시보드 열기 |
-| `Claude Flow Monitor: Refresh` | 데이터 새로고침 |
-| `Claude Flow Monitor: Select Team` | 팀 선택 |
-
-### 설정
-
-| 설정 | 기본값 | 설명 |
-|------|--------|------|
-| `ccFlowMonitor.language` | `auto` | 표시 언어 (auto/ko/en/ja/zh) |
-
-### 환경 변수
-
-| 변수 | 설명 |
-|------|------|
-| `CC_TEAM_VIEWER_CLAUDE_DIR` | ~/.claude 디렉토리 경로 오버라이드 |
-
-## 요구사항
-
-- VS Code 1.90.0 이상
-- Node.js 20.0.0 이상
-- Claude Code Agent Teams 활성화 (팀 데이터 필요)
-
-## 개발
+### Commands
 
 ```bash
-npm run build          # 빌드
-npm run dev            # watch 모드
-npm test               # 테스트
-npm run lint           # 린트
-npm run package        # .vsix 패키지 생성
+npm run build       # Bundle with tsup → dist/extension.js
+npm run dev         # Watch mode (rebuilds on save)
+npm run package     # Create .vsix package
+npm test            # Run tests in watch mode (vitest)
+npm run test:run    # Run tests once (CI)
+npm run lint        # ESLint check
 ```
 
-디버깅: VS Code에서 `F5` 키로 Extension Development Host 실행
+Press `F5` in VS Code to launch an **Extension Development Host** with the extension loaded.
 
-## 아키텍처
+---
 
-`@cc-team-viewer/core` 패키지를 의존성으로 사용하여 파일 감시, JSON 파싱, 이벤트 발행을 처리합니다. VS Code 확장은 WebView API를 통해 대시보드 UI를 제공하며, 트리뷰 사이드바와 상태 바로 빠른 접근을 지원합니다.
+## Contributing
 
-자세한 내용은 [기술 아키텍처 문서](docs/dev-guide/01-architecture.md)를 참조하세요.
+Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting a pull request.
 
-## 문서
+Issues and feature requests: [GitHub Issues](https://github.com/koh0001/claude-dashboard-extension/issues)
 
-| 문서 | 설명 |
-|------|------|
-| [PRD (기획안)](docs/plans/01-PRD.md) | 제품 요구사항, 기능 명세, 릴리즈 계획 |
-| [현황 분석](docs/plans/00-current-status-analysis.md) | 기존 cc-team-viewer 프로젝트 분석 |
-| [UI/UX 디자인 가이드](docs/design/01-ui-ux-design-guide.md) | 컬러 시스템, 레이아웃, 컴포넌트, 접근성 |
-| [i18n 설계](docs/design/02-i18n-design.md) | 다국어 아키텍처, 번역 키 구조 |
-| [기술 아키텍처](docs/dev-guide/01-architecture.md) | 시스템 구조, 데이터 흐름, 보안 |
-| [개발 가이드](docs/dev-guide/02-development-guide.md) | 개발 환경, 코딩 컨벤션, 테스트 |
+---
 
-## 라이선스
+## License
 
-MIT
+[MIT](LICENSE) — Copyright (c) 2024 koh-dev
 
-## 작성자
+---
 
-옥현 (koh-dev) — [GitHub](https://github.com/koh0001)
+## Links
+
+- [한국어 README](README.ko.md)
+- [日本語 README](README.ja.md)
+- [中文 README](README.zh.md)
+- [Original project: cc-team-viewer](https://github.com/koh0001/cc-team-viewer)
+- [Agent Teams documentation](https://code.claude.com/docs/en/agent-teams)

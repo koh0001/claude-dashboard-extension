@@ -1,0 +1,52 @@
+{
+  "name": "cfm-dev-team",
+  "description": "Claude Flow Monitor 개발 — Phase 2/3 기능 구현",
+  "leadAgentId": "team-lead@cfm-dev-team",
+  "createdAt": 1711411200000,
+  "members": [
+    {
+      "agentId": "team-lead@cfm-dev-team",
+      "name": "team-lead",
+      "agentType": "Architecture Lead",
+      "model": "opus",
+      "color": "#ffd700",
+      "planModeRequired": false,
+      "joinedAt": 1711411200000,
+      "backendType": "tmux",
+      "cwd": "/Volumes/Mac_sub/Git/claude-dashboard-extension"
+    },
+    {
+      "agentId": "backend-dev@cfm-dev-team",
+      "name": "backend-dev",
+      "agentType": "Backend Developer",
+      "model": "sonnet",
+      "color": "#4caf50",
+      "planModeRequired": false,
+      "joinedAt": 1711411260000,
+      "backendType": "tmux",
+      "cwd": "/Volumes/Mac_sub/Git/claude-dashboard-extension"
+    },
+    {
+      "agentId": "frontend-dev@cfm-dev-team",
+      "name": "frontend-dev",
+      "agentType": "Frontend Developer",
+      "model": "sonnet",
+      "color": "#2196f3",
+      "planModeRequired": false,
+      "joinedAt": 1711411320000,
+      "backendType": "tmux",
+      "cwd": "/Volumes/Mac_sub/Git/claude-dashboard-extension"
+    },
+    {
+      "agentId": "qa-engineer@cfm-dev-team",
+      "name": "qa-engineer",
+      "agentType": "QA Engineer",
+      "model": "haiku",
+      "color": "#ff9800",
+      "planModeRequired": false,
+      "joinedAt": 1711411380000,
+      "backendType": "tmux",
+      "cwd": "/Volumes/Mac_sub/Git/claude-dashboard-extension"
+    }
+  ]
+}

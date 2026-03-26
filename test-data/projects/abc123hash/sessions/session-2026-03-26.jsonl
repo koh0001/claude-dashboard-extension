@@ -1,0 +1,23 @@
+{"type":"tool_use","tool_name":"Read","tool_input":{"file_path":"/Volumes/Mac_sub/Git/claude-dashboard-extension/src/extension.ts"},"timestamp":"2026-03-26T09:00:00.000Z"}
+{"type":"tool_use","tool_name":"Edit","tool_input":{"file_path":"/Volumes/Mac_sub/Git/claude-dashboard-extension/src/views/dashboard-js.ts","old_string":"var tabs = 5","new_string":"var tabs = 7"},"timestamp":"2026-03-26T09:01:30.000Z"}
+{"type":"tool_use","tool_name":"Write","tool_input":{"file_path":"/Volumes/Mac_sub/Git/claude-dashboard-extension/src/services/git-service.ts"},"timestamp":"2026-03-26T09:03:00.000Z"}
+{"type":"tool_use","tool_name":"Bash","tool_input":{"command":"npm run build"},"timestamp":"2026-03-26T09:04:00.000Z"}
+{"type":"tool_use","tool_name":"Edit","tool_input":{"file_path":"/Volumes/Mac_sub/Git/claude-dashboard-extension/src/views/dashboard-css.ts","old_string":".cfm-panel","new_string":".cfm-panel, .cfm-timeline"},"timestamp":"2026-03-26T09:05:30.000Z"}
+{"type":"tool_use","tool_name":"Write","tool_input":{"file_path":"/Volumes/Mac_sub/Git/claude-dashboard-extension/src/providers/file-decoration-provider.ts"},"timestamp":"2026-03-26T09:07:00.000Z"}
+{"type":"tool_use","tool_name":"Bash","tool_input":{"command":"npm run test:run"},"timestamp":"2026-03-26T09:08:00.000Z"}
+{"type":"tool_use","tool_name":"Edit","tool_input":{"file_path":"/Volumes/Mac_sub/Git/claude-dashboard-extension/src/i18n/locales/ko.ts","old_string":"mini.justNow","new_string":"timeline.title"},"timestamp":"2026-03-26T09:09:00.000Z"}
+{"type":"tool_use","tool_name":"Edit","tool_input":{"file_path":"/Volumes/Mac_sub/Git/claude-dashboard-extension/src/i18n/locales/en.ts","old_string":"mini.justNow","new_string":"timeline.title"},"timestamp":"2026-03-26T09:09:30.000Z"}
+{"type":"tool_use","tool_name":"Edit","tool_input":{"file_path":"/Volumes/Mac_sub/Git/claude-dashboard-extension/src/i18n/locales/ja.ts","old_string":"mini.justNow","new_string":"timeline.title"},"timestamp":"2026-03-26T09:09:45.000Z"}
+{"type":"tool_use","tool_name":"Edit","tool_input":{"file_path":"/Volumes/Mac_sub/Git/claude-dashboard-extension/src/i18n/locales/zh.ts","old_string":"mini.justNow","new_string":"timeline.title"},"timestamp":"2026-03-26T09:10:00.000Z"}
+{"type":"tool_use","tool_name":"Edit","tool_input":{"file_path":"/Volumes/Mac_sub/Git/claude-dashboard-extension/src/views/dashboard-html.ts","old_string":"5 tabs","new_string":"7 tabs"},"timestamp":"2026-03-26T09:11:00.000Z"}
+{"type":"tool_use","tool_name":"Bash","tool_input":{"command":"npm run build"},"timestamp":"2026-03-26T09:12:00.000Z"}
+{"type":"tool_use","tool_name":"Edit","tool_input":{"file_path":"/Volumes/Mac_sub/Git/claude-dashboard-extension/src/types/messages.ts","old_string":"activity","new_string":"activity | timeline | metrics"},"timestamp":"2026-03-26T09:13:00.000Z"}
+{"type":"tool_use","tool_name":"Write","tool_input":{"file_path":"/Volumes/Mac_sub/Git/claude-dashboard-extension/src/services/export-service.ts"},"timestamp":"2026-03-26T09:15:00.000Z"}
+{"type":"tool_use","tool_name":"Write","tool_input":{"file_path":"/Volumes/Mac_sub/Git/claude-dashboard-extension/src/services/webhook-service.ts"},"timestamp":"2026-03-26T09:17:00.000Z"}
+{"type":"tool_use","tool_name":"Write","tool_input":{"file_path":"/Volumes/Mac_sub/Git/claude-dashboard-extension/src/services/mcp-service.ts"},"timestamp":"2026-03-26T09:19:00.000Z"}
+{"type":"tool_use","tool_name":"Edit","tool_input":{"file_path":"/Volumes/Mac_sub/Git/claude-dashboard-extension/src/extension.ts","old_string":"import { GitService }","new_string":"import { GitService, ExportService, WebhookService, McpService }"},"timestamp":"2026-03-26T09:20:00.000Z"}
+{"type":"tool_use","tool_name":"Edit","tool_input":{"file_path":"/Volumes/Mac_sub/Git/claude-dashboard-extension/package.json","old_string":"changeLanguage","new_string":"changeLanguage, exportCsv, exportReport, toggleMcpServer"},"timestamp":"2026-03-26T09:21:00.000Z"}
+{"type":"tool_use","tool_name":"Bash","tool_input":{"command":"npm run build"},"timestamp":"2026-03-26T09:22:00.000Z"}
+{"type":"tool_use","tool_name":"Bash","tool_input":{"command":"npm run test:run"},"timestamp":"2026-03-26T09:23:00.000Z"}
+{"type":"tool_use","tool_name":"Bash","tool_input":{"command":"npm run lint"},"timestamp":"2026-03-26T09:24:00.000Z"}
+{"type":"tool_use","tool_name":"Edit","tool_input":{"file_path":"/Volumes/Mac_sub/Git/claude-dashboard-extension/CLAUDE.md","old_string":"Phase 2: 향상 기능 (계획)","new_string":"Phase 2: 향상 기능"},"timestamp":"2026-03-26T09:25:00.000Z"}

@@ -1,0 +1,11 @@
+{
+  "id": "4",
+  "subject": "Git Diff 연동 서비스",
+  "description": "Co-Authored-By 커밋 파싱, AI 수정 파일 추적 GitService 구현",
+  "status": "completed",
+  "owner": "backend-dev",
+  "blocks": ["6"],
+  "blockedBy": [],
+  "metadata": {},
+  "completedAt": 1711420200000
+}

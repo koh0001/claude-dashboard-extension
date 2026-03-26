@@ -1,0 +1,197 @@
+{
+  "name": "claude-flow-monitor",
+  "displayName": "Claude Flow Monitor",
+  "description": "Real-time visualization of Claude Code workflows and Agent Teams",
+  "version": "0.1.0",
+  "publisher": "koh-dev",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Visualization",
+    "Other"
+  ],
+  "keywords": [
+    "claude",
+    "agent",
+    "monitor",
+    "dashboard",
+    "workflow"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/koh0001/claude-dashboard-extension.git"
+  },
+  "icon": "images/logo.png",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "claudeFlowMonitor.openDashboard",
+        "title": "Open Dashboard",
+        "category": "Claude Flow Monitor",
+        "icon": "$(pulse)"
+      },
+      {
+        "command": "claudeFlowMonitor.refresh",
+        "title": "Refresh",
+        "category": "Claude Flow Monitor",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "claudeFlowMonitor.selectTeam",
+        "title": "Select Team",
+        "category": "Claude Flow Monitor"
+      },
+      {
+        "command": "claudeFlowMonitor.changeLanguage",
+        "title": "Change Language",
+        "category": "Claude Flow Monitor",
+        "icon": "$(globe)"
+      },
+      {
+        "command": "claudeFlowMonitor.exportCsv",
+        "title": "Export as CSV",
+        "category": "Claude Flow Monitor",
+        "icon": "$(export)"
+      },
+      {
+        "command": "claudeFlowMonitor.exportReport",
+        "title": "Generate Report",
+        "category": "Claude Flow Monitor",
+        "icon": "$(output)"
+      },
+      {
+        "command": "claudeFlowMonitor.toggleMcpServer",
+        "title": "Toggle MCP Server",
+        "category": "Claude Flow Monitor"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "claude-flow-monitor",
+          "title": "Claude Flow Monitor",
+          "icon": "images/sidebar-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "claude-flow-monitor": [
+        {
+          "id": "claudeFlowMonitor.miniDashboard",
+          "name": "Dashboard",
+          "type": "webview"
+        },
+        {
+          "id": "claudeFlowMonitor.teamTree",
+          "name": "Teams",
+          "type": "tree"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "claudeFlowMonitor.teamTree",
+        "contents": "Claude Flow Monitor\n\n대시보드를 열어 Claude Code 활동을 모니터링하세요.\n\n[Open Dashboard](command:claudeFlowMonitor.openDashboard)\n\n[Export Report](command:claudeFlowMonitor.exportReport)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "claudeFlowMonitor.openDashboard",
+          "when": "view == claudeFlowMonitor.teamTree",
+          "group": "navigation"
+        },
+        {
+          "command": "claudeFlowMonitor.refresh",
+          "when": "view == claudeFlowMonitor.teamTree",
+          "group": "navigation"
+        },
+        {
+          "command": "claudeFlowMonitor.changeLanguage",
+          "when": "view == claudeFlowMonitor.dashboard",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Claude Flow Monitor",
+      "properties": {
+        "ccFlowMonitor.language": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "ko",
+            "en",
+            "ja",
+            "zh"
+          ],
+          "default": "auto",
+          "enumDescriptions": [
+            "Auto-detect (시스템 언어 자동 감지)",
+            "한국어",
+            "English",
+            "日本語",
+            "中文"
+          ],
+          "description": "Dashboard display language / 대시보드 표시 언어"
+        },
+        "ccFlowMonitor.notifications": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable real-time notifications / 실시간 알림 활성화"
+        },
+        "ccFlowMonitor.claudeDir": {
+          "type": "string",
+          "default": "",
+          "description": "Custom Claude directory path (default: ~/.claude) / Claude 디렉토리 경로"
+        },
+        "ccFlowMonitor.webhookUrl": {
+          "type": "string",
+          "default": "",
+          "description": "Slack or Discord webhook URL for notifications / 알림 웹훅 URL"
+        },
+        "ccFlowMonitor.mcpServerPort": {
+          "type": "number",
+          "default": 0,
+          "description": "MCP server port (0 = random) / MCP 서버 포트"
+        },
+        "ccFlowMonitor.timeFormat": {
+          "type": "string",
+          "enum": ["HH:MM:SS", "HH:MM", "MM:SS"],
+          "default": "HH:MM:SS",
+          "enumDescriptions": [
+            "시:분:초 (14:30:25)",
+            "시:분 (14:30)",
+            "분:초 (30:25)"
+          ],
+          "description": "Time display format / 시간 표시 형식"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "package": "vsce package --no-dependencies",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "lint": "eslint src/"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.90.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.0.0"
+  }
+}

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="pulse-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2196f3"/>
+      <stop offset="100%" stop-color="#4caf50"/>
+    </linearGradient>
+  </defs>
+  <!-- 배경 원 -->
+  <circle cx="64" cy="64" r="60" fill="#1e1e1e" stroke="#2d2d2d" stroke-width="2"/>
+  <!-- 펄스 라인 -->
+  <polyline points="16 64 32 64 42 36 58 92 70 48 80 64 112 64"
+    fill="none" stroke="url(#pulse-grad)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 에이전트 노드 -->
+  <circle cx="42" cy="36" r="5" fill="#2196f3"/>
+  <circle cx="58" cy="92" r="5" fill="#ff9800"/>
+  <circle cx="70" cy="48" r="5" fill="#4caf50"/>
+  <!-- 연결선 (에이전트 간) -->
+  <line x1="42" y1="36" x2="58" y2="92" stroke="#2196f3" stroke-width="1" opacity="0.3"/>
+  <line x1="58" y1="92" x2="70" y2="48" stroke="#ff9800" stroke-width="1" opacity="0.3"/>
+</svg>

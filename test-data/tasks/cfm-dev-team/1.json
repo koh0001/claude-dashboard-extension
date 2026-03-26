@@ -1,0 +1,11 @@
+{
+  "id": "1",
+  "subject": "Timeline View 탭 구현",
+  "description": "시간순 이벤트 시각화, 날짜 그룹핑, 타입별 아이콘/색상 적용",
+  "status": "completed",
+  "owner": "frontend-dev",
+  "blocks": ["5"],
+  "blockedBy": [],
+  "metadata": {},
+  "completedAt": 1711418400000
+}

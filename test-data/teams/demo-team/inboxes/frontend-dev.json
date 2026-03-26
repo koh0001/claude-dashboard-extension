@@ -1,0 +1,26 @@
+[
+  {
+    "id": "msg-1",
+    "from": "backend-dev",
+    "to": "frontend-dev",
+    "content": "API 엔드포인트 설계가 완료되었습니다. /api/v1/users, /api/v1/tasks 경로를 사용해주세요.",
+    "timestamp": 1711414800000,
+    "type": "text"
+  },
+  {
+    "id": "msg-2",
+    "from": "frontend-dev",
+    "to": "backend-dev",
+    "content": "확인했습니다. 응답 타입 정의를 공유해주실 수 있나요?",
+    "timestamp": 1711415400000,
+    "type": "text"
+  },
+  {
+    "id": "msg-3",
+    "from": "backend-dev",
+    "to": "frontend-dev",
+    "content": "types/api-response.ts에 정의해놓았습니다.",
+    "timestamp": 1711416000000,
+    "type": "text"
+  }
+]

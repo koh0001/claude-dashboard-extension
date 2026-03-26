@@ -1,0 +1,10 @@
+{
+  "id": "5",
+  "subject": "통합 테스트",
+  "description": "E2E 통합 테스트를 작성합니다",
+  "assignee": "qa-engineer",
+  "status": "pending",
+  "blockedBy": ["2", "3"],
+  "blocks": [],
+  "createdAt": 1711414800000
+}

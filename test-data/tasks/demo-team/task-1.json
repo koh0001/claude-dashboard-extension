@@ -1,0 +1,11 @@
+{
+  "id": "1",
+  "subject": "API 엔드포인트 설계",
+  "description": "REST API 엔드포인트를 설계하고 OpenAPI 스펙을 작성합니다",
+  "assignee": "backend-dev",
+  "status": "completed",
+  "blockedBy": [],
+  "blocks": ["3", "4"],
+  "createdAt": 1711411200000,
+  "completedAt": 1711414800000
+}

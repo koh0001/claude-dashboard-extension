@@ -1,0 +1,11 @@
+{
+  "id": "3",
+  "subject": "SVG DAG 그래프 개선",
+  "description": "베지에 커브 연결선 + 화살표로 의존성 그래프 시각화 향상",
+  "status": "completed",
+  "owner": "frontend-dev",
+  "blocks": [],
+  "blockedBy": [],
+  "metadata": {},
+  "completedAt": 1711425600000
+}

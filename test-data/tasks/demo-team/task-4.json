@@ -1,0 +1,10 @@
+{
+  "id": "4",
+  "subject": "인증 미들웨어",
+  "description": "JWT 기반 인증 미들웨어를 구현합니다",
+  "assignee": "backend-dev",
+  "status": "in_progress",
+  "blockedBy": ["1"],
+  "blocks": [],
+  "createdAt": 1711414800000
+}

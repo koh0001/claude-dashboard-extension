@@ -1,0 +1,11 @@
+{
+  "id": "2",
+  "subject": "Performance Metrics 대시보드",
+  "description": "SVG 도넛 차트, 속도 바 차트, 파일 히트맵 메트릭 뷰",
+  "status": "completed",
+  "owner": "frontend-dev",
+  "blocks": ["5"],
+  "blockedBy": [],
+  "metadata": {},
+  "completedAt": 1711422000000
+}

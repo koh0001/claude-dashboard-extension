@@ -1,0 +1,10 @@
+{
+  "id": "5",
+  "subject": "검색 및 필터 기능",
+  "description": "전역 검색 바, Ctrl+F 단축키, 탭별 실시간 필터링",
+  "status": "in_progress",
+  "owner": "frontend-dev",
+  "blocks": ["8"],
+  "blockedBy": ["1", "2"],
+  "metadata": {}
+}

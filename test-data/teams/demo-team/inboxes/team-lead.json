@@ -1,0 +1,26 @@
+[
+  {
+    "id": "msg-4",
+    "from": "system",
+    "to": "team-lead",
+    "content": "task_assignment: 차트 컴포넌트 구현 → frontend-dev",
+    "timestamp": 1711414800000,
+    "type": "system"
+  },
+  {
+    "id": "msg-5",
+    "from": "qa-engineer",
+    "to": "team-lead",
+    "content": "E2E 테스트 프레임워크로 Playwright를 사용해도 될까요?",
+    "timestamp": 1711416600000,
+    "type": "text"
+  },
+  {
+    "id": "msg-6",
+    "from": "system",
+    "to": "team-lead",
+    "content": "permission_request: backend-dev requests file write access",
+    "timestamp": 1711417200000,
+    "type": "permission"
+  }
+]

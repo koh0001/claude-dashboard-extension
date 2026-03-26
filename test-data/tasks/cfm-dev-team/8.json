@@ -1,0 +1,10 @@
+{
+  "id": "8",
+  "subject": "통합 테스트 및 QA",
+  "description": "전체 기능 통합 테스트, 빌드/린트 검증, macOS 호환성 확인",
+  "status": "pending",
+  "owner": "qa-engineer",
+  "blocks": [],
+  "blockedBy": ["5", "6", "7"],
+  "metadata": {}
+}

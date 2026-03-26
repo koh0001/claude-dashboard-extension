@@ -1,0 +1,10 @@
+{
+  "id": "6",
+  "subject": "Export 서비스 (CSV/리포트)",
+  "description": "CSV 다운로드 + Markdown 리포트 생성 + 에디터 탭 표시",
+  "status": "in_progress",
+  "owner": "backend-dev",
+  "blocks": ["8"],
+  "blockedBy": ["4"],
+  "metadata": {}
+}

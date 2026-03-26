@@ -1,0 +1,34 @@
+[
+  {
+    "from": "team-lead",
+    "to": "backend-dev",
+    "type": "text",
+    "content": "execFile로 충분합니다. maxBuffer를 10MB로 설정하면 대부분 커버됩니다.",
+    "timestamp": 1711413900000,
+    "read": true
+  },
+  {
+    "from": "team-lead",
+    "to": "backend-dev",
+    "type": "task_assignment",
+    "content": "task_assignment: Export 서비스 구현을 시작해 주세요. CSV + Markdown 리포트 두 가지 포맷입니다.",
+    "timestamp": 1711420500000,
+    "read": true
+  },
+  {
+    "from": "frontend-dev",
+    "to": "backend-dev",
+    "type": "text",
+    "content": "Export 버튼 UI는 제가 만들어 둘게요. postMessage로 'exportCsv' 타입 보내면 됩니다.",
+    "timestamp": 1711421000000,
+    "read": true
+  },
+  {
+    "from": "backend-dev",
+    "to": "backend-dev",
+    "type": "permission_request",
+    "content": "permission_request: fs.writeFileSync 호출을 위해 파일 쓰기 권한이 필요합니다",
+    "timestamp": 1711421500000,
+    "read": false
+  }
+]

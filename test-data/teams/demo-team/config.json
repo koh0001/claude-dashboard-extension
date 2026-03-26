@@ -1,0 +1,36 @@
+{
+  "name": "demo-team",
+  "description": "Claude Flow Monitor 개발팀",
+  "lead": "team-lead",
+  "members": [
+    {
+      "name": "team-lead",
+      "description": "Architecture Review & Coordination",
+      "model": "opus",
+      "color": "#ffd700",
+      "tools": ["Read", "Grep", "Agent"]
+    },
+    {
+      "name": "backend-dev",
+      "description": "Backend Developer",
+      "model": "sonnet-3.5",
+      "color": "#4caf50",
+      "tools": ["Read", "Write", "Edit", "Bash"]
+    },
+    {
+      "name": "frontend-dev",
+      "description": "Frontend Developer",
+      "model": "sonnet-3.5",
+      "color": "#2196f3",
+      "tools": ["Read", "Write", "Edit", "Bash"]
+    },
+    {
+      "name": "qa-engineer",
+      "description": "QA Engineer",
+      "model": "haiku",
+      "color": "#ff9800",
+      "tools": ["Read", "Bash", "Grep"]
+    }
+  ],
+  "createdAt": 1711411200000
+}

@@ -1,0 +1,11 @@
+{
+  "id": "2",
+  "subject": "DB 스키마 설계",
+  "description": "PostgreSQL 데이터베이스 스키마를 설계합니다",
+  "assignee": "backend-dev",
+  "status": "completed",
+  "blockedBy": [],
+  "blocks": ["5"],
+  "createdAt": 1711411200000,
+  "completedAt": 1711416600000
+}

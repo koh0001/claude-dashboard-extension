@@ -1,0 +1,10 @@
+{
+  "id": "6",
+  "subject": "문서 작성",
+  "description": "API 문서와 사용자 가이드를 작성합니다",
+  "assignee": "team-lead",
+  "status": "pending",
+  "blockedBy": [],
+  "blocks": [],
+  "createdAt": 1711414800000
+}

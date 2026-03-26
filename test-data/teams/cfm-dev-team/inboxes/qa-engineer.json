@@ -1,0 +1,18 @@
+[
+  {
+    "from": "team-lead",
+    "to": "qa-engineer",
+    "type": "task_assignment",
+    "content": "task_assignment: 통합 테스트 계획 수립. Task 5, 6, 7 완료 후 실행 예정.",
+    "timestamp": 1711411500000,
+    "read": true
+  },
+  {
+    "from": "team-lead",
+    "to": "qa-engineer",
+    "type": "text",
+    "content": "macOS 호환성 테스트도 포함해 주세요. fs.watch, git execFile, HTTP 서버 바인딩 확인 필수입니다.",
+    "timestamp": 1711424000000,
+    "read": true
+  }
+]

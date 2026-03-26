@@ -1,0 +1,10 @@
+{
+  "id": "7",
+  "subject": "MCP 서버 모드 구현",
+  "description": "HTTP JSON API로 대시보드 데이터를 외부 노출 (/api/teams, /api/activities)",
+  "status": "pending",
+  "owner": "backend-dev",
+  "blocks": ["8"],
+  "blockedBy": [],
+  "metadata": {}
+}
