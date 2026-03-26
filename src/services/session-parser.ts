@@ -8,7 +8,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import type { ActivityItem } from '../types/messages.js';
+import type { ActivityItem, TokenUsage } from '../types/messages.js';
 
 /** JSONL 라인의 파싱 결과 */
 interface SessionEntry {
@@ -17,6 +17,12 @@ interface SessionEntry {
   message?: {
     role?: string;
     content?: unknown;
+    usage?: {
+      input_tokens?: number;
+      output_tokens?: number;
+      cache_creation_input_tokens?: number;
+      cache_read_input_tokens?: number;
+    };
   };
   // tool_use 관련
   tool_name?: string;
@@ -31,11 +37,25 @@ export class SessionParserService implements vscode.Disposable {
   private knownLines = new Map<string, number>(); // 파일별 읽은 줄 수
   private disposables: vscode.Disposable[] = [];
 
+  /** 누적 토큰 사용량 */
+  private tokenUsage: TokenUsage = {
+    inputTokens: 0, outputTokens: 0,
+    cacheCreationTokens: 0, cacheReadTokens: 0, totalTokens: 0,
+  };
+
   private readonly _onActivity = new vscode.EventEmitter<ActivityItem[]>();
   readonly onActivity = this._onActivity.event;
 
+  private readonly _onTokenUpdate = new vscode.EventEmitter<TokenUsage>();
+  readonly onTokenUpdate = this._onTokenUpdate.event;
+
   constructor() {
-    this.disposables.push(this._onActivity);
+    this.disposables.push(this._onActivity, this._onTokenUpdate);
+  }
+
+  /** 현재 누적 토큰 사용량 */
+  getTokenUsage(): TokenUsage {
+    return { ...this.tokenUsage };
   }
 
   /** 세션 디렉토리 감시 시작 */
@@ -130,7 +150,23 @@ export class SessionParserService implements vscode.Disposable {
         return null; // 기타 도구는 무시
       }
 
-      // assistant 메시지는 무시 (너무 많음)
+      // assistant 메시지에서 토큰 사용량 추출
+      if (entry.type === 'assistant' && entry.message?.usage) {
+        const u = entry.message.usage;
+        const input = u.input_tokens || 0;
+        const output = u.output_tokens || 0;
+        const cacheCreate = u.cache_creation_input_tokens || 0;
+        const cacheRead = u.cache_read_input_tokens || 0;
+        if (input > 0 || output > 0) {
+          this.tokenUsage.inputTokens += input;
+          this.tokenUsage.outputTokens += output;
+          this.tokenUsage.cacheCreationTokens += cacheCreate;
+          this.tokenUsage.cacheReadTokens += cacheRead;
+          this.tokenUsage.totalTokens += input + output + cacheCreate;
+          this._onTokenUpdate.fire({ ...this.tokenUsage });
+        }
+      }
+
       return null;
     } catch {
       return null; // 파싱 실패 graceful skip

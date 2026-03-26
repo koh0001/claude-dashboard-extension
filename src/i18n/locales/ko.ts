@@ -126,4 +126,11 @@ export const ko = {
   'summary.title': 'AI 활동 요약',
   'summary.generated': '요약 리포트가 생성되었습니다',
   'summary.noData': '요약할 데이터가 없습니다',
+
+  'token.title': '토큰 사용량',
+  'token.input': '입력 토큰',
+  'token.output': '출력 토큰',
+  'token.cacheCreate': '캐시 생성',
+  'token.cacheRead': '캐시 읽기',
+  'token.total': '총 토큰',
 } as const;

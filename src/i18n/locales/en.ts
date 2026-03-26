@@ -124,4 +124,11 @@ export const en = {
   'summary.title': 'AI Activity Summary',
   'summary.generated': 'Summary report has been generated',
   'summary.noData': 'No data available for summary',
+
+  'token.title': 'Token Usage',
+  'token.input': 'Input Tokens',
+  'token.output': 'Output Tokens',
+  'token.cacheCreate': 'Cache Creation',
+  'token.cacheRead': 'Cache Read',
+  'token.total': 'Total Tokens',
 } as const;

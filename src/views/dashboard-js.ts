@@ -19,7 +19,8 @@ export function getDashboardJs(): string {
     messageFilter: 'all',
     taskView: 'table',
     searchQuery: '',
-    todoItems: []
+    todoItems: [],
+    tokenUsage: { inputTokens: 0, outputTokens: 0, cacheCreationTokens: 0, cacheReadTokens: 0, totalTokens: 0 }
   };
 
   function t(key, params) {
@@ -862,6 +863,78 @@ export function getDashboardJs(): string {
       hmEmpty.textContent = t('metrics.noDataHint');
       panel.appendChild(hmEmpty);
     }
+
+    // 토큰 사용량 섹션
+    var tk = state.tokenUsage;
+    var tokenTitle = document.createElement('h4');
+    tokenTitle.textContent = t('token.title');
+    tokenTitle.style.margin = 'var(--cfm-space-lg) 0 var(--cfm-space-sm)';
+    panel.appendChild(tokenTitle);
+
+    var tokenGrid = document.createElement('div');
+    tokenGrid.className = 'cfm-metrics-grid';
+
+    function formatTokenCount(n) {
+      if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+      if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+      return String(n);
+    }
+
+    var tokenItems = [
+      { label: t('token.input'), value: tk.inputTokens, color: '#2196f3' },
+      { label: t('token.output'), value: tk.outputTokens, color: '#4caf50' },
+      { label: t('token.cacheCreate'), value: tk.cacheCreationTokens, color: '#ff9800' },
+      { label: t('token.cacheRead'), value: tk.cacheReadTokens, color: '#9c27b0' },
+    ];
+    tokenItems.forEach(function(item) {
+      var card = document.createElement('div');
+      card.className = 'cfm-metric-card';
+      var val = document.createElement('div');
+      val.className = 'cfm-metric-value';
+      val.style.color = item.color;
+      val.textContent = formatTokenCount(item.value);
+      var lbl = document.createElement('div');
+      lbl.className = 'cfm-metric-label';
+      lbl.textContent = item.label;
+      card.appendChild(val);
+      card.appendChild(lbl);
+      tokenGrid.appendChild(card);
+    });
+    panel.appendChild(tokenGrid);
+
+    // 총 토큰 바
+    var totalBar = document.createElement('div');
+    totalBar.className = 'cfm-token-total';
+    var totalLabel = document.createElement('span');
+    totalLabel.textContent = t('token.total');
+    var totalValue = document.createElement('span');
+    totalValue.className = 'cfm-token-total-value';
+    totalValue.textContent = formatTokenCount(tk.totalTokens);
+    totalBar.appendChild(totalLabel);
+    totalBar.appendChild(totalValue);
+    panel.appendChild(totalBar);
+
+    // 토큰 비율 바
+    if (tk.totalTokens > 0) {
+      var ratioBar = document.createElement('div');
+      ratioBar.className = 'cfm-token-ratio';
+      var segments = [
+        { pct: (tk.inputTokens / tk.totalTokens) * 100, color: '#2196f3' },
+        { pct: (tk.outputTokens / tk.totalTokens) * 100, color: '#4caf50' },
+        { pct: (tk.cacheCreationTokens / tk.totalTokens) * 100, color: '#ff9800' },
+        { pct: (tk.cacheReadTokens / tk.totalTokens) * 100, color: '#9c27b0' },
+      ];
+      segments.forEach(function(seg) {
+        if (seg.pct > 0) {
+          var s = document.createElement('div');
+          s.className = 'cfm-token-segment';
+          s.style.width = seg.pct + '%';
+          s.style.background = seg.color;
+          ratioBar.appendChild(s);
+        }
+      });
+      panel.appendChild(ratioBar);
+    }
   }
 
   function createMetricDonut(label, percent, subtitle, color) {
@@ -947,7 +1020,7 @@ export function getDashboardJs(): string {
   }
 
   // === 4. Message Handler ===
-  var ALLOWED_MSG_TYPES = ['init', 'snapshotUpdate', 'translationsUpdate', 'activityUpdate', 'themeChanged', 'todoUpdate'];
+  var ALLOWED_MSG_TYPES = ['init', 'snapshotUpdate', 'translationsUpdate', 'activityUpdate', 'themeChanged', 'todoUpdate', 'tokenUpdate'];
   window.addEventListener('message', function(event) {
     var msg = event.data;
     if (!msg || typeof msg.type !== 'string') return;
@@ -988,6 +1061,12 @@ export function getDashboardJs(): string {
       case 'todoUpdate':
         if (msg.items) {
           state.todoItems = msg.items;
+        }
+        break;
+      case 'tokenUpdate':
+        if (msg.usage) {
+          state.tokenUsage = msg.usage;
+          if (state.currentTab === 'metrics') renderMetrics(getSnap());
         }
         break;
     }

@@ -1088,7 +1088,38 @@ body {
   white-space: nowrap;
 }
 
-/* === 26. 검색 바 강화 === */
+/* === 26. 토큰 사용량 === */
+.cfm-token-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--cfm-space-sm) var(--cfm-space-md);
+  background: var(--cfm-overlay-subtle);
+  border-radius: var(--cfm-radius-md);
+  border: 1px solid var(--cfm-border-default);
+  margin-top: var(--cfm-space-sm);
+  font-size: var(--cfm-font-size-sm);
+  color: var(--cfm-text-secondary);
+}
+.cfm-token-total-value {
+  font-size: var(--cfm-font-size-lg);
+  font-weight: var(--cfm-font-weight-bold);
+  color: var(--cfm-text-primary);
+}
+.cfm-token-ratio {
+  display: flex;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: var(--cfm-space-sm);
+}
+.cfm-token-segment {
+  height: 100%;
+  min-width: 2px;
+  transition: width var(--cfm-transition-normal);
+}
+
+/* === 27. 검색 바 강화 === */
 .cfm-search-icon {
   font-size: var(--cfm-font-size-sm);
   opacity: 0.6;

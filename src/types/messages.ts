@@ -83,12 +83,22 @@ export interface ActivityItem {
   source?: string;
 }
 
+/** 토큰 사용량 */
+export interface TokenUsage {
+  inputTokens: number;
+  outputTokens: number;
+  cacheCreationTokens: number;
+  cacheReadTokens: number;
+  totalTokens: number;
+}
+
 /** Extension → WebView 메시지 */
 export type ExtToWebMessage =
   | { type: 'init'; data: InitPayload; translations: Record<string, string>; locale: string }
   | { type: 'snapshotUpdate'; teamName: string; data: SnapshotPayload }
   | { type: 'translationsUpdate'; translations: Record<string, string>; locale: string }
   | { type: 'activityUpdate'; items: ActivityItem[] }
+  | { type: 'tokenUpdate'; usage: TokenUsage }
   | { type: 'themeChanged'; themeKind: string };
 
 /** 알림 페이로드 */

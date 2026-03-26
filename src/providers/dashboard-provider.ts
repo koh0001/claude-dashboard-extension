@@ -51,6 +51,13 @@ export class DashboardProvider implements vscode.Disposable {
       }),
     );
 
+    // 토큰 사용량 구독
+    this.disposables.push(
+      sessionParser.onTokenUpdate((usage) => {
+        this.postMessage({ type: 'tokenUpdate', usage });
+      }),
+    );
+
     // 테마 변경 구독
     this.disposables.push(
       vscode.window.onDidChangeActiveColorTheme(() => {

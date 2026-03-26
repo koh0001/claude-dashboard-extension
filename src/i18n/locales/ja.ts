@@ -124,4 +124,11 @@ export const ja = {
   'summary.title': 'AIアクティビティサマリー',
   'summary.generated': 'サマリーレポートが生成されました',
   'summary.noData': 'サマリーするデータがありません',
+
+  'token.title': 'トークン使用量',
+  'token.input': '入力トークン',
+  'token.output': '出力トークン',
+  'token.cacheCreate': 'キャッシュ作成',
+  'token.cacheRead': 'キャッシュ読取',
+  'token.total': '合計トークン',
 } as const;

@@ -124,4 +124,11 @@ export const zh = {
   'summary.title': 'AI 活动摘要',
   'summary.generated': '摘要报告已生成',
   'summary.noData': '没有可用于摘要的数据',
+
+  'token.title': 'Token 用量',
+  'token.input': '输入 Token',
+  'token.output': '输出 Token',
+  'token.cacheCreate': '缓存创建',
+  'token.cacheRead': '缓存读取',
+  'token.total': '总 Token',
 } as const;

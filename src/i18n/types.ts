@@ -166,6 +166,14 @@ export type ExtendedTranslationMap = TranslationMap & {
   'summary.title': string;
   'summary.generated': string;
   'summary.noData': string;
+
+  // 토큰 사용량
+  'token.title': string;
+  'token.input': string;
+  'token.output': string;
+  'token.cacheCreate': string;
+  'token.cacheRead': string;
+  'token.total': string;
 };
 
 /** WebView로 전달할 번역 키 목록 */
@@ -218,4 +226,5 @@ export const WEBVIEW_TRANSLATION_KEYS: (keyof ExtendedTranslationMap)[] = [
   'webhook.title', 'webhook.sent', 'webhook.error', 'webhook.notConfigured',
   'mcp.title', 'mcp.servers', 'mcp.noServers', 'mcp.serverRunning', 'mcp.serverStopped', 'mcp.port',
   'summary.title', 'summary.generated', 'summary.noData',
+  'token.title', 'token.input', 'token.output', 'token.cacheCreate', 'token.cacheRead', 'token.total',
 ];
