@@ -62,10 +62,12 @@ export class SessionParserService implements vscode.Disposable {
   watchDirectory(sessionsDir: string): void {
     if (!fs.existsSync(sessionsDir)) return;
 
-    // 기존 파일 초기 스캔
+    // 기존 파일 초기 스캔 (파일만 필터, 디렉토리 제외)
     try {
-      const files = fs.readdirSync(sessionsDir)
-        .filter((f) => f.endsWith('.jsonl'))
+      const entries = fs.readdirSync(sessionsDir, { withFileTypes: true });
+      const files = entries
+        .filter((e) => e.isFile() && e.name.endsWith('.jsonl'))
+        .map((e) => e.name)
         .sort();
       // 최근 파일만 파싱 (최대 3개)
       const recent = files.slice(-3);
@@ -93,16 +95,38 @@ export class SessionParserService implements vscode.Disposable {
     }
   }
 
-  /** JSONL 파일 파싱 */
+  /** JSONL 파일 파싱 (대용량 파일은 끝부분만 읽기) */
   parseFile(filePath: string): ActivityItem[] {
     const items: ActivityItem[] = [];
     try {
-      const content = fs.readFileSync(filePath, 'utf-8');
+      const stat = fs.statSync(filePath);
+      const MAX_READ_BYTES = 512 * 1024; // 최대 512KB만 읽기
+
+      let content: string;
+      if (stat.size > MAX_READ_BYTES) {
+        // 대용량: 파일 끝 512KB만 읽기
+        const fd = fs.openSync(filePath, 'r');
+        const buf = Buffer.alloc(MAX_READ_BYTES);
+        fs.readSync(fd, buf, 0, MAX_READ_BYTES, stat.size - MAX_READ_BYTES);
+        fs.closeSync(fd);
+        content = buf.toString('utf-8');
+        // 첫 줄은 잘렸을 수 있으므로 제거
+        const firstNewline = content.indexOf('\n');
+        if (firstNewline > 0) content = content.slice(firstNewline + 1);
+        // 이 파일은 이미 부분 읽기 완료로 표시
+        this.knownLines.set(filePath, -1);
+      } else {
+        content = fs.readFileSync(filePath, 'utf-8');
+      }
+
       const lines = content.split('\n').filter(Boolean);
       const startLine = this.knownLines.get(filePath) || 0;
-      this.knownLines.set(filePath, lines.length);
+      const actualStart = startLine === -1 ? 0 : startLine;
+      if (startLine !== -1) {
+        this.knownLines.set(filePath, lines.length);
+      }
 
-      for (let i = startLine; i < lines.length; i++) {
+      for (let i = actualStart; i < lines.length; i++) {
         const item = this.parseLine(lines[i], filePath, i);
         if (item) items.push(item);
       }
