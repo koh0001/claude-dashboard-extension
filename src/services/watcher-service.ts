@@ -49,6 +49,8 @@ export function toSnapshotPayload(teamName: string, snapshot: TeamSnapshot): Sna
       assignee: t.owner,
       blockedBy: t.blockedBy,
       blocks: t.blocks,
+      createdAt: (t as unknown as Record<string, unknown>).createdAt as number | undefined,
+      completedAt: t.completedAt,
     })),
     messages: snapshot.messages.slice(-50).map((m, i) => ({
       id: `${m.timestamp}-${i}`,

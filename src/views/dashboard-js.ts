@@ -127,7 +127,7 @@ export function getDashboardJs(): string {
       { icon: '\\u{1F4CA}', value: snap.stats.totalTasks, label: t('stats.tasks') },
       { icon: '\\u26A1', value: snap.stats.activeTasks, label: t('stats.active') },
       { icon: '\\u{1F4AC}', value: snap.stats.totalMessages, label: t('stats.messages') },
-      { icon: '\\u23F1', value: formatDuration(snap.stats.elapsedMs), label: t('stats.elapsed') }
+      { icon: '\\u23F1', value: formatTime(Date.now()), label: t('stats.elapsed') }
     ];
 
     items.forEach(function(item) {
@@ -296,13 +296,17 @@ export function getDashboardJs(): string {
     table.className = 'cfm-task-table';
     var thead = document.createElement('thead');
     var hr = document.createElement('tr');
-    [t('task.headerId'), t('task.headerTask'), t('task.headerAssignee'), t('task.headerStatus')].forEach(function(h) {
+    [t('task.headerId'), t('task.headerTask'), t('task.headerAssignee'), t('task.headerStatus'), t('task.headerDuration'), t('task.headerTokens')].forEach(function(h) {
       var th = document.createElement('th');
       th.textContent = h;
       hr.appendChild(th);
     });
     thead.appendChild(hr);
     table.appendChild(thead);
+
+    // 토큰 추정용: 전체 활동 시간 범위와 총 토큰
+    var totalTokens = state.tokenUsage.totalTokens;
+    var allActivities = state.activities;
 
     var tbody = document.createElement('tbody');
     tasks.forEach(function(task) {
@@ -319,10 +323,46 @@ export function getDashboardJs(): string {
       badge.setAttribute('data-status', task.status);
       badge.textContent = t('status.' + (task.status === 'in_progress' ? 'inProgress' : task.status));
       tdStatus.appendChild(badge);
+
+      // 소요시간 (상태 변경 기반)
+      var tdDuration = document.createElement('td');
+      if (task.createdAt) {
+        var endTime = task.completedAt || Date.now();
+        var durationMs = endTime - task.createdAt;
+        tdDuration.textContent = formatDuration(durationMs);
+      } else {
+        tdDuration.textContent = '-';
+      }
+
+      // 추정 토큰 (시간 구간 기반)
+      var tdTokens = document.createElement('td');
+      if (task.createdAt && totalTokens > 0) {
+        var taskStart = task.createdAt;
+        var taskEnd = task.completedAt || Date.now();
+        var taskActivities = allActivities.filter(function(a) {
+          return a.timestamp >= taskStart && a.timestamp <= taskEnd;
+        });
+        var totalActivitiesInRange = allActivities.length || 1;
+        var estimatedTokens = Math.round(totalTokens * (taskActivities.length / totalActivitiesInRange));
+        var tokenSpan = document.createElement('span');
+        tokenSpan.className = 'cfm-estimated';
+        tokenSpan.title = t('task.estimated');
+        if (estimatedTokens >= 1000) {
+          tokenSpan.textContent = '~' + (estimatedTokens / 1000).toFixed(1) + 'K';
+        } else {
+          tokenSpan.textContent = '~' + estimatedTokens;
+        }
+        tdTokens.appendChild(tokenSpan);
+      } else {
+        tdTokens.textContent = '-';
+      }
+
       tr.appendChild(tdId);
       tr.appendChild(tdTitle);
       tr.appendChild(tdOwner);
       tr.appendChild(tdStatus);
+      tr.appendChild(tdDuration);
+      tr.appendChild(tdTokens);
       tbody.appendChild(tr);
     });
     table.appendChild(tbody);

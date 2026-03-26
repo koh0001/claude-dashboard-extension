@@ -125,6 +125,10 @@ export const zh = {
   'summary.generated': '摘要报告已生成',
   'summary.noData': '没有可用于摘要的数据',
 
+  'task.headerDuration': '耗时',
+  'task.headerTokens': 'Token',
+  'task.estimated': '≈ 估算',
+
   'token.title': 'Token 用量',
   'token.input': '输入 Token',
   'token.output': '输出 Token',

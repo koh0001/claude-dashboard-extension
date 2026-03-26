@@ -125,6 +125,10 @@ export const en = {
   'summary.generated': 'Summary report has been generated',
   'summary.noData': 'No data available for summary',
 
+  'task.headerDuration': 'Duration',
+  'task.headerTokens': 'Tokens',
+  'task.estimated': '≈ est.',
+
   'token.title': 'Token Usage',
   'token.input': 'Input Tokens',
   'token.output': 'Output Tokens',

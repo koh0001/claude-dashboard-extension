@@ -127,6 +127,10 @@ export const ko = {
   'summary.generated': '요약 리포트가 생성되었습니다',
   'summary.noData': '요약할 데이터가 없습니다',
 
+  'task.headerDuration': '소요시간',
+  'task.headerTokens': '토큰',
+  'task.estimated': '≈ 추정',
+
   'token.title': '토큰 사용량',
   'token.input': '입력 토큰',
   'token.output': '출력 토큰',

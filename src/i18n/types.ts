@@ -167,6 +167,11 @@ export type ExtendedTranslationMap = TranslationMap & {
   'summary.generated': string;
   'summary.noData': string;
 
+  // 태스크 시간/토큰
+  'task.headerDuration': string;
+  'task.headerTokens': string;
+  'task.estimated': string;
+
   // 토큰 사용량
   'token.title': string;
   'token.input': string;
@@ -226,5 +231,6 @@ export const WEBVIEW_TRANSLATION_KEYS: (keyof ExtendedTranslationMap)[] = [
   'webhook.title', 'webhook.sent', 'webhook.error', 'webhook.notConfigured',
   'mcp.title', 'mcp.servers', 'mcp.noServers', 'mcp.serverRunning', 'mcp.serverStopped', 'mcp.port',
   'summary.title', 'summary.generated', 'summary.noData',
+  'task.headerDuration', 'task.headerTokens', 'task.estimated',
   'token.title', 'token.input', 'token.output', 'token.cacheCreate', 'token.cacheRead', 'token.total',
 ];

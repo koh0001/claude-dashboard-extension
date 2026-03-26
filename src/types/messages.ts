@@ -55,6 +55,8 @@ export interface SnapshotPayload {
     assignee: string;
     blockedBy: string[];
     blocks: string[];
+    createdAt?: number;
+    completedAt?: number;
   }>;
   messages: Array<{
     id: string;

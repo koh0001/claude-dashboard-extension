@@ -125,6 +125,10 @@ export const ja = {
   'summary.generated': 'サマリーレポートが生成されました',
   'summary.noData': 'サマリーするデータがありません',
 
+  'task.headerDuration': '所要時間',
+  'task.headerTokens': 'トークン',
+  'task.estimated': '≈ 推定',
+
   'token.title': 'トークン使用量',
   'token.input': '入力トークン',
   'token.output': '出力トークン',

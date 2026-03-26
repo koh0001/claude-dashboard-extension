@@ -1088,7 +1088,14 @@ body {
   white-space: nowrap;
 }
 
-/* === 26. 토큰 사용량 === */
+/* === 26. 추정치 표시 === */
+.cfm-estimated {
+  color: var(--cfm-text-muted);
+  font-style: italic;
+  cursor: help;
+}
+
+/* === 27. 토큰 사용량 === */
 .cfm-token-total {
   display: flex;
   justify-content: space-between;
