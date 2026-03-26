@@ -752,7 +752,7 @@ export function getDashboardJs(): string {
       completedTasks = snap.stats.completedTasks;
       completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
     }
-    grid.appendChild(createMetricDonut(t('metrics.completionRate'), completionRate, completedTasks + '/' + totalTasks));
+    grid.appendChild(createMetricDonut(t('metrics.completionRate'), completionRate, completedTasks + '/' + totalTasks, '#4caf50'));
 
     // 2. 에이전트 활용도
     var agentUtil = 0;
@@ -760,7 +760,7 @@ export function getDashboardJs(): string {
       var activeCount = snap.agents.filter(function(a) { return a.status === 'active'; }).length;
       agentUtil = Math.round((activeCount / snap.agents.length) * 100);
     }
-    grid.appendChild(createMetricDonut(t('metrics.agentUtilization'), agentUtil, (snap ? snap.agents.length : 0) + ' agents'));
+    grid.appendChild(createMetricDonut(t('metrics.agentUtilization'), agentUtil, (snap ? snap.agents.length : 0) + ' agents', '#2196f3'));
 
     // 3. 변경 파일 수
     var fileEdits = {};
@@ -858,7 +858,7 @@ export function getDashboardJs(): string {
     }
   }
 
-  function createMetricDonut(label, percent, subtitle) {
+  function createMetricDonut(label, percent, subtitle, color) {
     var card = document.createElement('div');
     card.className = 'cfm-metric-card';
     var donut = document.createElement('div');
@@ -874,6 +874,7 @@ export function getDashboardJs(): string {
     var fill = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     fill.setAttribute('cx', '18'); fill.setAttribute('cy', '18'); fill.setAttribute('r', '15.9155');
     fill.setAttribute('class', 'cfm-donut-fill');
+    if (color) fill.style.stroke = color;
     fill.setAttribute('stroke-dasharray', percent + ' ' + (100 - percent));
     svg.appendChild(track);
     svg.appendChild(fill);
@@ -881,6 +882,7 @@ export function getDashboardJs(): string {
     var pctLabel = document.createElement('div');
     pctLabel.className = 'cfm-donut-pct';
     pctLabel.textContent = percent + '%';
+    if (color) pctLabel.style.color = color;
     donut.appendChild(pctLabel);
     card.appendChild(donut);
     var labelEl = document.createElement('div');
