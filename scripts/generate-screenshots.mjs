@@ -25,6 +25,8 @@ const TRANSLATIONS = {
     filesChanged: '변경된 파일 수', taskVelocity: '태스크 처리 속도',
     assignee: '담당자', status: '상태', blocker: 'blocked by',
     table: '테이블', kanban: '칸반', all: '전체', conversation: '대화', system: '시스템',
+    tokenTitle: '토큰 사용량', tokenInput: '입력 토큰', tokenOutput: '출력 토큰',
+    tokenCache: '캐시 생성', tokenRead: '캐시 읽기', tokenTotal: '총 토큰',
   },
   en: {
     overview: 'Overview', tasks: 'Tasks', messages: 'Messages', deps: 'Dependencies',
@@ -37,6 +39,8 @@ const TRANSLATIONS = {
     filesChanged: 'Files Changed', taskVelocity: 'Task Velocity',
     assignee: 'Assignee', status: 'Status', blocker: 'blocked by',
     table: 'Table', kanban: 'Kanban', all: 'All', conversation: 'Conversation', system: 'System',
+    tokenTitle: 'Token Usage', tokenInput: 'Input Tokens', tokenOutput: 'Output Tokens',
+    tokenCache: 'Cache Creation', tokenRead: 'Cache Read', tokenTotal: 'Total Tokens',
   },
   ja: {
     overview: 'Overview', tasks: 'タスク', messages: 'メッセージ', deps: '依存関係',
@@ -49,6 +53,8 @@ const TRANSLATIONS = {
     filesChanged: '変更ファイル数', taskVelocity: 'タスク処理速度',
     assignee: '担当者', status: 'ステータス', blocker: 'blocked by',
     table: 'テーブル', kanban: 'カンバン', all: 'すべて', conversation: '会話', system: 'システム',
+    tokenTitle: 'トークン使用量', tokenInput: '入力トークン', tokenOutput: '出力トークン',
+    tokenCache: 'キャッシュ作成', tokenRead: 'キャッシュ読取', tokenTotal: '合計トークン',
   },
   zh: {
     overview: 'Overview', tasks: '任务', messages: '消息', deps: '依赖',
@@ -61,6 +67,8 @@ const TRANSLATIONS = {
     filesChanged: '变更文件数', taskVelocity: '任务处理速度',
     assignee: '负责人', status: '状态', blocker: 'blocked by',
     table: '表格', kanban: '看板', all: '全部', conversation: '对话', system: '系统',
+    tokenTitle: 'Token 用量', tokenInput: '输入 Token', tokenOutput: '输出 Token',
+    tokenCache: '缓存创建', tokenRead: '缓存读取', tokenTotal: '总 Token',
   },
 };
 
@@ -305,6 +313,28 @@ function generateHtml(tab, lang) {
     <div class="velocity">${[2,4,6,8,5,3,7,9,6,4,3,2].map((v,i) => `<div class="vel-wrap"><div class="vel-bar" style="height:${v*10}%"></div><div class="vel-label">${String(i+9).padStart(2,'0')}</div></div>`).join('')}</div>
     <h4 style="margin:16px 0 8px">${t.filesChanged}</h4>
     <div class="heatmap">${fileData.map(f => `<div class="hm-row"><span class="hm-file">${f.name}</span><div class="hm-bar-wrap"><div class="hm-bar" style="width:${(f.count/12)*100}%"></div></div><span class="hm-count">${f.count}</span></div>`).join('')}</div>`;
+  } else if (tab === 'tokens') {
+    const tkData = { input: 48520, output: 12340, cache: 87340, read: 24680, total: 172880 };
+    content = `<h3>${t.tokenTitle}</h3>
+    <div class="metrics-grid" style="grid-template-columns:repeat(4,1fr)">
+      <div class="metric-card"><div class="metric-val" style="color:#2196f3">${(tkData.input/1000).toFixed(1)}K</div><div class="metric-name">${t.tokenInput}</div></div>
+      <div class="metric-card"><div class="metric-val" style="color:#4caf50">${(tkData.output/1000).toFixed(1)}K</div><div class="metric-name">${t.tokenOutput}</div></div>
+      <div class="metric-card"><div class="metric-val" style="color:#ff9800">${(tkData.cache/1000).toFixed(1)}K</div><div class="metric-name">${t.tokenCache}</div></div>
+      <div class="metric-card"><div class="metric-val" style="color:#9c27b0">${(tkData.read/1000).toFixed(1)}K</div><div class="metric-name">${t.tokenRead}</div></div>
+    </div>
+    <div class="token-total"><span>${t.tokenTotal}</span><span class="token-total-val">${(tkData.total/1000).toFixed(1)}K</span></div>
+    <div class="token-ratio">
+      <div style="width:${(tkData.input/tkData.total)*100}%;background:#2196f3"></div>
+      <div style="width:${(tkData.output/tkData.total)*100}%;background:#4caf50"></div>
+      <div style="width:${(tkData.cache/tkData.total)*100}%;background:#ff9800"></div>
+      <div style="width:${(tkData.read/tkData.total)*100}%;background:#9c27b0"></div>
+    </div>
+    <div class="token-legend">
+      <span><span class="legend-dot" style="background:#2196f3"></span>${t.tokenInput} ${Math.round(tkData.input/tkData.total*100)}%</span>
+      <span><span class="legend-dot" style="background:#4caf50"></span>${t.tokenOutput} ${Math.round(tkData.output/tkData.total*100)}%</span>
+      <span><span class="legend-dot" style="background:#ff9800"></span>${t.tokenCache} ${Math.round(tkData.cache/tkData.total*100)}%</span>
+      <span><span class="legend-dot" style="background:#9c27b0"></span>${t.tokenRead} ${Math.round(tkData.read/tkData.total*100)}%</span>
+    </div>`;
   }
 
   return `<!DOCTYPE html><html><head><meta charset="UTF-8">
@@ -395,6 +425,12 @@ h4{font-size:12px;color:#999}
 .hm-bar-wrap{flex:1;height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden}
 .hm-bar{height:100%;background:#ff9800;border-radius:4px}
 .hm-count{min-width:20px;text-align:right;color:#666}
+.token-total{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:rgba(255,255,255,.03);border-radius:6px;border:1px solid #3c3c3c;margin-top:8px;font-size:12px;color:#888}
+.token-total-val{font-size:18px;font-weight:700;color:#e1e1e1}
+.token-ratio{display:flex;height:10px;border-radius:5px;overflow:hidden;margin-top:8px}
+.token-ratio>div{height:100%;min-width:3px}
+.token-legend{display:flex;gap:16px;margin-top:8px;font-size:11px;color:#888;flex-wrap:wrap}
+.legend-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:middle}
 </style></head><body>
 <div class="search">🔍 ${t.searchPlaceholder}</div>
 <div class="tabs">${tabs.map(tb => `<div class="tab ${tb===tab?'active':''}">${tabLabels[tb]}</div>`).join('')}</div>
@@ -412,7 +448,7 @@ ${content}
 
 async function main() {
   const browser = await chromium.launch();
-  const tabsToCapture = ['overview','tasks','messages','deps','activity','timeline','metrics'];
+  const tabsToCapture = ['overview','tasks','messages','deps','activity','timeline','metrics','tokens'];
   const languages = ['ko','en','ja','zh'];
 
   for (const lang of languages) {

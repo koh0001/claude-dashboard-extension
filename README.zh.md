@@ -82,6 +82,8 @@
 - Metrics 标签页展示 4 色 Token 卡片 + 总量条 + 比例分段条
 - 输入(蓝)、输出(绿)、缓存创建(橙)、缓存读取(紫)颜色区分
 
+![Token 用量](images/screenshots/tokens-zh.png)
+
 ### 截图与功能介绍
 
 #### Overview — 一览 Agent 状态

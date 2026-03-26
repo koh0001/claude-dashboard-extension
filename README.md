@@ -46,6 +46,8 @@ Claude Flow Monitor is a standalone VS Code extension that tracks Claude Code ac
 - **Git integration** — Identifies AI-authored commits via `Co-Authored-By` and tracks AI contribution
 - **Export** — Download session data as CSV or generate a Markdown summary report in an editor tab
 - **Token usage** — Real-time input/output/cache token tracking from session JSONL, visualized with color-coded cards and ratio bar
+
+![Token Usage](images/screenshots/tokens-en.png)
 - **Webhooks** — Send task/agent events to Slack or Discord via HTTP POST
 - **MCP server mode** — Exposes `/api/teams`, `/api/activities`, `/api/metrics` as a local HTTP JSON API
 - **Adaptive theming** — Inherits VS Code's dark, light, high-contrast, and custom themes (Dracula, One Dark Pro, etc.)
