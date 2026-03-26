@@ -5,16 +5,16 @@
       <stop offset="100%" stop-color="#4caf50"/>
     </linearGradient>
   </defs>
-  <!-- 배경 (정사각형, 둥근 모서리) -->
+  <!-- 배경 -->
   <rect width="256" height="256" rx="32" ry="32" fill="#1e1e1e"/>
-  <!-- 펄스 라인 -->
-  <polyline points="32 128 64 128 84 64 116 192 140 88 160 128 224 128"
+  <!-- 펄스 라인 (x=128 기준 대칭) -->
+  <polyline points="28 128 60 128 100 52 128 204 156 72 196 128 228 128"
     fill="none" stroke="url(#pulse-grad)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-  <!-- 에이전트 노드 -->
-  <circle cx="84" cy="64" r="10" fill="#2196f3"/>
-  <circle cx="116" cy="192" r="10" fill="#ff9800"/>
-  <circle cx="140" cy="88" r="10" fill="#4caf50"/>
+  <!-- 에이전트 노드 (대칭 배치) -->
+  <circle cx="100" cy="52" r="10" fill="#2196f3"/>
+  <circle cx="128" cy="204" r="10" fill="#ff9800"/>
+  <circle cx="156" cy="72" r="10" fill="#4caf50"/>
   <!-- 연결선 -->
-  <line x1="84" y1="64" x2="116" y2="192" stroke="#2196f3" stroke-width="2" opacity="0.3"/>
-  <line x1="116" y1="192" x2="140" y2="88" stroke="#ff9800" stroke-width="2" opacity="0.3"/>
+  <line x1="100" y1="52" x2="128" y2="204" stroke="#2196f3" stroke-width="2" opacity="0.3"/>
+  <line x1="128" y1="204" x2="156" y2="72" stroke="#ff9800" stroke-width="2" opacity="0.3"/>
 </svg>
