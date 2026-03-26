@@ -2,6 +2,32 @@
 
 All notable changes to Claude Flow Monitor will be documented in this file.
 
+## [0.3.1] - 2026-03-26
+
+### New Features
+- Token usage monitoring — parses `message.usage` from session JSONL (input/output/cache tokens)
+- Metrics tab: token cards (4 types), total bar, ratio segment bar
+- Sidebar mini dashboard (WebviewView — key metrics, recent activity, quick actions)
+- Donut chart color differentiation (completion=green, utilization=blue)
+
+### Improvements
+- Logo redesigned: centered symmetric pulse, full-square rounded rect
+- DAG graph arrows use DOM-based `getBoundingClientRect()` positioning
+- Time format: HH:MM:SS default, configurable via settings
+- Dashboard quick-open button in sidebar title bar + Welcome View
+- Velocity chart gradient + hover glow
+- Heatmap gradient + hover highlight
+- Metric card hover effect
+
+### Fixes
+- Donut chart text overlap (absolute positioning)
+- Search icon rendering (HTML entity `&#x1F50D;`)
+- Export report NaN/undefined (proper `toSnapshotPayload` mapping)
+- Sidebar dashboard flicker (postMessage partial update instead of full HTML replace)
+- Task Velocity / Files Changed always visible (removed conditional guard)
+
+---
+
 ## [0.1.0] - 2026-03-26
 
 ### Phase 1: MVP

@@ -77,6 +77,11 @@
 - 触发时机：任务完成、Agent 加入 / 离开
 - 通过 `ccFlowMonitor.webhookUrl` 配置地址
 
+### Token 用量监控
+- 从会话 JSONL 实时汇总**输入/输出/缓存 Token**
+- Metrics 标签页展示 4 色 Token 卡片 + 总量条 + 比例分段条
+- 输入(蓝)、输出(绿)、缓存创建(橙)、缓存读取(紫)颜色区分
+
 ### 截图与功能介绍
 
 #### Overview — 一览 Agent 状态
