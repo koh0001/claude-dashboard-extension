@@ -64,7 +64,7 @@ const TRANSLATIONS = {
   },
 };
 
-// 테스트 데이터
+// 테스트 데이터 (언어별 현지화)
 const agents = [
   { name: 'team-lead', type: 'Architecture Lead', model: 'opus', color: '#ffd700', isLead: true, status: 'active', current: 'Review PR #42', done: 3, total: 3 },
   { name: 'backend-dev', type: 'Backend Developer', model: 'sonnet', color: '#4caf50', isLead: false, status: 'active', current: 'Export Service', done: 2, total: 4 },
@@ -72,40 +72,136 @@ const agents = [
   { name: 'qa-engineer', type: 'QA Engineer', model: 'haiku', color: '#ff9800', isLead: false, status: 'idle', current: null, done: 0, total: 1 },
 ];
 
-const tasks = [
-  { id: '1', title: 'Timeline View 탭 구현', status: 'completed', assignee: 'frontend-dev', blockedBy: [] },
-  { id: '2', title: 'Performance Metrics', status: 'completed', assignee: 'frontend-dev', blockedBy: [] },
-  { id: '3', title: 'SVG DAG 그래프 개선', status: 'completed', assignee: 'frontend-dev', blockedBy: [] },
-  { id: '4', title: 'Git Diff 연동', status: 'completed', assignee: 'backend-dev', blockedBy: [] },
-  { id: '5', title: '검색 및 필터 기능', status: 'in_progress', assignee: 'frontend-dev', blockedBy: ['1','2'] },
-  { id: '6', title: 'Export 서비스', status: 'in_progress', assignee: 'backend-dev', blockedBy: ['4'] },
-  { id: '7', title: 'MCP 서버 모드', status: 'pending', assignee: 'backend-dev', blockedBy: [] },
-  { id: '8', title: '통합 테스트 및 QA', status: 'pending', assignee: 'qa-engineer', blockedBy: ['5','6','7'] },
-];
+const TASKS = {
+  ko: [
+    { id: '1', title: 'Timeline View 탭 구현', status: 'completed', assignee: 'frontend-dev' },
+    { id: '2', title: 'Performance Metrics 구현', status: 'completed', assignee: 'frontend-dev' },
+    { id: '3', title: 'SVG DAG 그래프 개선', status: 'completed', assignee: 'frontend-dev' },
+    { id: '4', title: 'Git Diff 연동 서비스', status: 'completed', assignee: 'backend-dev' },
+    { id: '5', title: '검색 및 필터 기능', status: 'in_progress', assignee: 'frontend-dev' },
+    { id: '6', title: 'Export 서비스 구현', status: 'in_progress', assignee: 'backend-dev' },
+    { id: '7', title: 'MCP 서버 모드 구현', status: 'pending', assignee: 'backend-dev' },
+    { id: '8', title: '통합 테스트 및 QA', status: 'pending', assignee: 'qa-engineer' },
+  ],
+  en: [
+    { id: '1', title: 'Implement Timeline View tab', status: 'completed', assignee: 'frontend-dev' },
+    { id: '2', title: 'Performance Metrics dashboard', status: 'completed', assignee: 'frontend-dev' },
+    { id: '3', title: 'Improve SVG DAG graph', status: 'completed', assignee: 'frontend-dev' },
+    { id: '4', title: 'Git Diff integration service', status: 'completed', assignee: 'backend-dev' },
+    { id: '5', title: 'Search and filter feature', status: 'in_progress', assignee: 'frontend-dev' },
+    { id: '6', title: 'Implement Export service', status: 'in_progress', assignee: 'backend-dev' },
+    { id: '7', title: 'MCP server mode', status: 'pending', assignee: 'backend-dev' },
+    { id: '8', title: 'Integration testing & QA', status: 'pending', assignee: 'qa-engineer' },
+  ],
+  ja: [
+    { id: '1', title: 'タイムラインビュータブ実装', status: 'completed', assignee: 'frontend-dev' },
+    { id: '2', title: 'パフォーマンスメトリクス', status: 'completed', assignee: 'frontend-dev' },
+    { id: '3', title: 'SVG DAGグラフ改善', status: 'completed', assignee: 'frontend-dev' },
+    { id: '4', title: 'Git Diff連携サービス', status: 'completed', assignee: 'backend-dev' },
+    { id: '5', title: '検索・フィルター機能', status: 'in_progress', assignee: 'frontend-dev' },
+    { id: '6', title: 'エクスポートサービス実装', status: 'in_progress', assignee: 'backend-dev' },
+    { id: '7', title: 'MCPサーバーモード', status: 'pending', assignee: 'backend-dev' },
+    { id: '8', title: '統合テスト・QA', status: 'pending', assignee: 'qa-engineer' },
+  ],
+  zh: [
+    { id: '1', title: '实现时间线视图标签', status: 'completed', assignee: 'frontend-dev' },
+    { id: '2', title: '性能指标仪表板', status: 'completed', assignee: 'frontend-dev' },
+    { id: '3', title: '改进SVG DAG图', status: 'completed', assignee: 'frontend-dev' },
+    { id: '4', title: 'Git Diff集成服务', status: 'completed', assignee: 'backend-dev' },
+    { id: '5', title: '搜索和过滤功能', status: 'in_progress', assignee: 'frontend-dev' },
+    { id: '6', title: '实现导出服务', status: 'in_progress', assignee: 'backend-dev' },
+    { id: '7', title: 'MCP服务器模式', status: 'pending', assignee: 'backend-dev' },
+    { id: '8', title: '集成测试与QA', status: 'pending', assignee: 'qa-engineer' },
+  ],
+};
 
-const activities = [
-  { time: '09:25', icon: '📝', text: 'CLAUDE.md 수정' },
-  { time: '09:24', icon: '⚡', text: 'npm run lint' },
-  { time: '09:23', icon: '⚡', text: 'npm run test:run' },
-  { time: '09:22', icon: '⚡', text: 'npm run build' },
-  { time: '09:21', icon: '📝', text: 'package.json 수정' },
-  { time: '09:20', icon: '📝', text: 'extension.ts 수정' },
-  { time: '09:19', icon: '📝', text: 'mcp-service.ts 생성' },
-  { time: '09:17', icon: '📝', text: 'webhook-service.ts 생성' },
-  { time: '09:15', icon: '📝', text: 'export-service.ts 생성' },
-  { time: '09:13', icon: '📝', text: 'messages.ts 수정' },
-];
+const ACTIVITIES = {
+  ko: [
+    { time: '09:25', icon: '📝', text: 'CLAUDE.md 수정' },
+    { time: '09:24', icon: '⚡', text: 'npm run lint 실행' },
+    { time: '09:23', icon: '⚡', text: 'npm run test:run 실행' },
+    { time: '09:22', icon: '⚡', text: 'npm run build 실행' },
+    { time: '09:21', icon: '📝', text: 'package.json 수정' },
+    { time: '09:20', icon: '📝', text: 'extension.ts 수정' },
+    { time: '09:19', icon: '📝', text: 'mcp-service.ts 생성' },
+    { time: '09:17', icon: '📝', text: 'webhook-service.ts 생성' },
+    { time: '09:15', icon: '📝', text: 'export-service.ts 생성' },
+    { time: '09:13', icon: '📝', text: 'messages.ts 수정' },
+  ],
+  en: [
+    { time: '09:25', icon: '📝', text: 'Modified CLAUDE.md' },
+    { time: '09:24', icon: '⚡', text: 'Ran npm run lint' },
+    { time: '09:23', icon: '⚡', text: 'Ran npm run test:run' },
+    { time: '09:22', icon: '⚡', text: 'Ran npm run build' },
+    { time: '09:21', icon: '📝', text: 'Modified package.json' },
+    { time: '09:20', icon: '📝', text: 'Modified extension.ts' },
+    { time: '09:19', icon: '📝', text: 'Created mcp-service.ts' },
+    { time: '09:17', icon: '📝', text: 'Created webhook-service.ts' },
+    { time: '09:15', icon: '📝', text: 'Created export-service.ts' },
+    { time: '09:13', icon: '📝', text: 'Modified messages.ts' },
+  ],
+  ja: [
+    { time: '09:25', icon: '📝', text: 'CLAUDE.md 変更' },
+    { time: '09:24', icon: '⚡', text: 'npm run lint 実行' },
+    { time: '09:23', icon: '⚡', text: 'npm run test:run 実行' },
+    { time: '09:22', icon: '⚡', text: 'npm run build 実行' },
+    { time: '09:21', icon: '📝', text: 'package.json 変更' },
+    { time: '09:20', icon: '📝', text: 'extension.ts 変更' },
+    { time: '09:19', icon: '📝', text: 'mcp-service.ts 作成' },
+    { time: '09:17', icon: '📝', text: 'webhook-service.ts 作成' },
+    { time: '09:15', icon: '📝', text: 'export-service.ts 作成' },
+    { time: '09:13', icon: '📝', text: 'messages.ts 変更' },
+  ],
+  zh: [
+    { time: '09:25', icon: '📝', text: '修改 CLAUDE.md' },
+    { time: '09:24', icon: '⚡', text: '执行 npm run lint' },
+    { time: '09:23', icon: '⚡', text: '执行 npm run test:run' },
+    { time: '09:22', icon: '⚡', text: '执行 npm run build' },
+    { time: '09:21', icon: '📝', text: '修改 package.json' },
+    { time: '09:20', icon: '📝', text: '修改 extension.ts' },
+    { time: '09:19', icon: '📝', text: '创建 mcp-service.ts' },
+    { time: '09:17', icon: '📝', text: '创建 webhook-service.ts' },
+    { time: '09:15', icon: '📝', text: '创建 export-service.ts' },
+    { time: '09:13', icon: '📝', text: '修改 messages.ts' },
+  ],
+};
 
-const messages = [
-  { from: 'backend-dev', to: 'team-lead', content: 'GitService에서 execFile 대신 spawn을 써야 할까요?', time: '09:10', type: 'text' },
-  { from: 'team-lead', to: 'backend-dev', content: 'execFile로 충분합니다. maxBuffer를 10MB로 설정하세요.', time: '09:11', type: 'text' },
-  { from: 'system', to: 'team-lead', content: 'task_assignment: Export 서비스 → backend-dev', time: '09:12', type: 'system' },
-  { from: 'frontend-dev', to: 'team-lead', content: 'Timeline과 Metrics 탭 구현 완료했습니다.', time: '09:15', type: 'text' },
-  { from: 'system', to: 'team-lead', content: 'permission_request: fs.writeFileSync 권한 필요', time: '09:18', type: 'permission' },
-];
+const MESSAGES = {
+  ko: [
+    { from: 'backend-dev', to: 'team-lead', content: 'GitService에서 execFile 대신 spawn을 써야 할까요?', time: '09:10', type: 'text' },
+    { from: 'team-lead', to: 'backend-dev', content: 'execFile로 충분합니다. maxBuffer를 10MB로 설정하세요.', time: '09:11', type: 'text' },
+    { from: 'system', to: 'team-lead', content: 'task_assignment: Export 서비스 → backend-dev', time: '09:12', type: 'system' },
+    { from: 'frontend-dev', to: 'team-lead', content: 'Timeline과 Metrics 탭 구현 완료했습니다.', time: '09:15', type: 'text' },
+    { from: 'system', to: 'team-lead', content: 'permission_request: fs.writeFileSync 권한 필요', time: '09:18', type: 'permission' },
+  ],
+  en: [
+    { from: 'backend-dev', to: 'team-lead', content: 'Should we use spawn instead of execFile in GitService?', time: '09:10', type: 'text' },
+    { from: 'team-lead', to: 'backend-dev', content: 'execFile is fine. Set maxBuffer to 10MB.', time: '09:11', type: 'text' },
+    { from: 'system', to: 'team-lead', content: 'task_assignment: Export Service → backend-dev', time: '09:12', type: 'system' },
+    { from: 'frontend-dev', to: 'team-lead', content: 'Timeline and Metrics tabs are done.', time: '09:15', type: 'text' },
+    { from: 'system', to: 'team-lead', content: 'permission_request: fs.writeFileSync access needed', time: '09:18', type: 'permission' },
+  ],
+  ja: [
+    { from: 'backend-dev', to: 'team-lead', content: 'GitServiceでexecFileの代わりにspawnを使うべきですか？', time: '09:10', type: 'text' },
+    { from: 'team-lead', to: 'backend-dev', content: 'execFileで十分です。maxBufferを10MBに設定してください。', time: '09:11', type: 'text' },
+    { from: 'system', to: 'team-lead', content: 'task_assignment: エクスポートサービス → backend-dev', time: '09:12', type: 'system' },
+    { from: 'frontend-dev', to: 'team-lead', content: 'タイムラインとメトリクスタブの実装完了しました。', time: '09:15', type: 'text' },
+    { from: 'system', to: 'team-lead', content: 'permission_request: fs.writeFileSync権限が必要', time: '09:18', type: 'permission' },
+  ],
+  zh: [
+    { from: 'backend-dev', to: 'team-lead', content: 'GitService 中应该用 spawn 替代 execFile 吗？', time: '09:10', type: 'text' },
+    { from: 'team-lead', to: 'backend-dev', content: 'execFile 就够了，把 maxBuffer 设为 10MB。', time: '09:11', type: 'text' },
+    { from: 'system', to: 'team-lead', content: 'task_assignment: 导出服务 → backend-dev', time: '09:12', type: 'system' },
+    { from: 'frontend-dev', to: 'team-lead', content: '时间线和指标标签已完成。', time: '09:15', type: 'text' },
+    { from: 'system', to: 'team-lead', content: 'permission_request: 需要 fs.writeFileSync 权限', time: '09:18', type: 'permission' },
+  ],
+};
 
 function generateHtml(tab, lang) {
   const t = TRANSLATIONS[lang];
+  const tasks = TASKS[lang];
+  const activities = ACTIVITIES[lang];
+  const messages = MESSAGES[lang];
   const statusColors = { completed: '#4caf50', in_progress: '#ff9800', pending: '#9e9e9e' };
   const statusLabels = { completed: t.completed, in_progress: t.inProgress, pending: t.pending };
 
