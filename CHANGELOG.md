@@ -2,6 +2,21 @@
 
 All notable changes to Claude Flow Monitor will be documented in this file.
 
+## [0.6.0] - 2026-03-27
+
+### New Features
+- Project history persistence — `cfm-stats.json` saves cumulative token/activity stats across sessions
+- Session-based metrics fallback — file edit ratio + command ratio donuts when no Agent Teams active
+- JSONL structure parsing — supports `assistant→message.content[].tool_use` format (real Claude Code sessions)
+
+### Fixes
+- Large JSONL optimization — reads last 512KB only for 8MB+ files
+- File sorting — modification time instead of UUID alphabetical order
+- Directory filtering — `withFileTypes` to exclude subdirectories from JSONL scan
+- Duplicate parsing prevention — `parsedFiles` tracking restored on extension restart
+
+---
+
 ## [0.5.0] - 2026-03-26
 
 ### New Features

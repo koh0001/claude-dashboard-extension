@@ -101,6 +101,10 @@ MCP → McpService → HTTP JSON API (localhost) / .mcp.json 파싱
 ### Phase 4: 분석 기능
 - [x] 토큰 사용량 모니터링 (세션 JSONL usage 파싱 — 입력/출력/캐시 집계, Metrics 탭 표시)
 - [x] 태스크별 소요시간 + 추정 토큰 (Tasks 탭 — createdAt→completedAt 기반, 시간 구간 토큰 추정)
+- [x] 프로젝트 히스토리 저장 (cfm-stats.json — 토큰/활동 누적, 재시작 시 복원)
+- [x] 세션 기반 Metrics 대체 (Agent Teams 없을 때 파일편집/커맨드 비율 도넛)
+- [x] JSONL 구조 파싱 수정 (assistant→message.content[].tool_use 실제 구조 지원)
+- [x] 대용량 JSONL 최적화 (8MB+ 파일 끝 512KB만 읽기, 수정시간순 정렬)
 
 ## 코어 의존성
 

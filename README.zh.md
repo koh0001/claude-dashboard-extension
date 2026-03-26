@@ -81,6 +81,7 @@
 - 从会话 JSONL 实时汇总**输入/输出/缓存 Token**
 - Metrics 标签页展示 4 色 Token 卡片 + 总量条 + 比例分段条
 - 输入(蓝)、输出(绿)、缓存创建(橙)、缓存读取(紫)颜色区分
+- 项目历史持久化 (`cfm-stats.json`) — 重启后保留累计统计
 
 ![Token 用量](images/screenshots/tokens-zh.png)
 
