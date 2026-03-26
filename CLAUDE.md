@@ -56,7 +56,7 @@ src/
 ### 데이터 흐름
 ```
 파일 변경 → core TeamWatcher → WatcherService (이벤트) → DashboardProvider (메시지 큐) → WebView (렌더)
-워크스페이스 → WorkspaceMatcher (SHA-256) → SessionParser (JSONL) → ActivityFeedProvider → WebView
+워크스페이스 → WorkspaceMatcher (경로 치환) → SessionParser (JSONL, 루트+sessions/ 폴백) → ActivityFeedProvider → WebView
 Git 저장소 → GitService (Co-Authored-By) → AiFileDecorationProvider → Explorer 뱃지
 알림 → WatcherService → WebhookService → Slack/Discord 웹훅
 내보내기 → ExportService → CSV 파일 / Markdown 에디터 탭
@@ -100,6 +100,7 @@ MCP → McpService → HTTP JSON API (localhost) / .mcp.json 파싱
 
 ### Phase 4: 분석 기능
 - [x] 토큰 사용량 모니터링 (세션 JSONL usage 파싱 — 입력/출력/캐시 집계, Metrics 탭 표시)
+- [x] 태스크별 소요시간 + 추정 토큰 (Tasks 탭 — createdAt→completedAt 기반, 시간 구간 토큰 추정)
 
 ## 코어 의존성
 

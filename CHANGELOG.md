@@ -2,6 +2,19 @@
 
 All notable changes to Claude Flow Monitor will be documented in this file.
 
+## [0.5.0] - 2026-03-26
+
+### New Features
+- Per-task duration + estimated token columns in Tasks tab (createdAt→completedAt, time-window token estimation with `~` prefix)
+- Session JSONL detection fallback — watches project root when `sessions/` folder doesn't exist
+- Workspace hash matching fix — uses path substitution (`/` and `_` → `-`) instead of SHA-256
+
+### Improvements
+- Stats Bar: elapsed time → current time display
+- i18n: added `task.headerDuration`, `task.headerTokens`, `task.estimated` (4 languages)
+
+---
+
 ## [0.4.0] - 2026-03-26
 
 ### New Features
