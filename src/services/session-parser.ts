@@ -67,8 +67,9 @@ export class SessionParserService implements vscode.Disposable {
       const entries = fs.readdirSync(sessionsDir, { withFileTypes: true });
       const files = entries
         .filter((e) => e.isFile() && e.name.endsWith('.jsonl'))
-        .map((e) => e.name)
-        .sort();
+        .map((e) => ({ name: e.name, mtime: fs.statSync(path.join(sessionsDir, e.name)).mtimeMs }))
+        .sort((a, b) => a.mtime - b.mtime)
+        .map((e) => e.name);
       // 최근 파일만 파싱 (최대 3개)
       const recent = files.slice(-3);
       for (const file of recent) {
