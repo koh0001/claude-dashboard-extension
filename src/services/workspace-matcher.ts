@@ -116,10 +116,13 @@ export class WorkspaceMatcherService implements vscode.Disposable {
 
   /** ProjectMatch 객체 생성 */
   private buildMatch(workspacePath: string, claudeProjectDir: string): ProjectMatch {
+    // sessions/ 하위 폴더가 있으면 사용, 없으면 프로젝트 루트 자체를 감시
+    const sessionsSubDir = path.join(claudeProjectDir, 'sessions');
+    const sessionsDir = fs.existsSync(sessionsSubDir) ? sessionsSubDir : claudeProjectDir;
     return {
       workspacePath,
       claudeProjectDir,
-      sessionsDir: path.join(claudeProjectDir, 'sessions'),
+      sessionsDir,
     };
   }
 
