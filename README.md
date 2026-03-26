@@ -3,7 +3,7 @@
 🌐 [한국어](README.ko.md) | **English** | [日本語](README.ja.md) | [中文](README.zh.md)
 
 <p align="center">
-  <img src="images/logo.png" alt="Claude Flow Monitor" width="128" />
+  <img src="images/logo.png" alt="Claude Flow Monitor" width="180" />
 </p>
 
 <p align="center">

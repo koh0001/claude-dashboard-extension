@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="images/logo.png" alt="Claude Flow Monitor" width="128" />
+  <img src="images/logo.png" alt="Claude Flow Monitor" width="180" />
 </p>
 
 <h1 align="center">Claude Flow Monitor</h1>
