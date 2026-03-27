@@ -1002,38 +1002,42 @@ body {
 }
 .cfm-heatmap-row {
   display: flex;
-  align-items: center;
-  gap: var(--cfm-space-sm);
+  flex-direction: column;
+  gap: 2px;
   font-size: var(--cfm-font-size-xs);
+  padding: var(--cfm-space-xs) 0;
+}
+.cfm-heatmap-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .cfm-heatmap-file {
-  min-width: 120px;
-  max-width: 180px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   font-family: var(--cfm-font-mono);
+  flex: 1;
 }
 .cfm-heatmap-bar-wrap {
-  flex: 1;
-  height: 8px;
+  width: 100%;
+  height: 6px;
   background: var(--cfm-overlay-light);
-  border-radius: 4px;
+  border-radius: 3px;
   overflow: hidden;
 }
 .cfm-heatmap-bar {
   height: 100%;
   background: linear-gradient(to right, var(--cfm-status-in-progress), rgba(var(--cfm-status-in-progress-base), 0.5));
-  border-radius: 4px;
+  border-radius: 3px;
   transition: width var(--cfm-transition-normal);
 }
 .cfm-heatmap-row:hover .cfm-heatmap-bar {
   background: var(--cfm-status-in-progress);
 }
 .cfm-heatmap-count {
-  min-width: 24px;
-  text-align: right;
   color: var(--cfm-text-muted);
+  font-family: var(--cfm-font-mono);
 }
 
 /* === 25. SVG DAG 그래프 (향상) === */

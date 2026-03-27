@@ -1020,8 +1020,11 @@ export function getDashboardJs(): string {
     var fileCount = Object.keys(fileEdits).length;
     grid.appendChild(createMetricCard(t('metrics.filesChanged'), String(fileCount), '\\u{1F4C1}'));
 
-    // 4. 세션 수
-    grid.appendChild(createMetricCard(t('metrics.totalSessions'), '1', '\\u{1F4CA}'));
+    // 4. 세션 수 (활동의 고유 소스 파일 수 기반)
+    var sessionSet = {};
+    state.activities.forEach(function(a) { if (a.id) { var src = a.id.split('-')[0]; sessionSet[src] = true; } });
+    var sessionCount = Math.max(1, Object.keys(sessionSet).length);
+    grid.appendChild(createMetricCard(t('metrics.totalSessions'), String(sessionCount), '\\u{1F4CA}'));
 
     // 5. 메시지 수
     var msgCount = snap ? snap.stats.totalMessages : 0;
@@ -1086,22 +1089,25 @@ export function getDashboardJs(): string {
       fileEntries.slice(0, 10).forEach(function(entry) {
         var row = document.createElement('div');
         row.className = 'cfm-heatmap-row';
+        var top = document.createElement('div');
+        top.className = 'cfm-heatmap-top';
         var fname = document.createElement('span');
         fname.className = 'cfm-heatmap-file';
         fname.textContent = entry.file.split('/').pop() || entry.file;
         fname.title = entry.file;
+        var cnt = document.createElement('span');
+        cnt.className = 'cfm-heatmap-count';
+        cnt.textContent = String(entry.count);
+        top.appendChild(fname);
+        top.appendChild(cnt);
         var barWrap = document.createElement('div');
         barWrap.className = 'cfm-heatmap-bar-wrap';
         var bar = document.createElement('div');
         bar.className = 'cfm-heatmap-bar';
         bar.style.width = Math.round((entry.count / hmMax) * 100) + '%';
-        var cnt = document.createElement('span');
-        cnt.className = 'cfm-heatmap-count';
-        cnt.textContent = String(entry.count);
         barWrap.appendChild(bar);
-        row.appendChild(fname);
+        row.appendChild(top);
         row.appendChild(barWrap);
-        row.appendChild(cnt);
         heatmap.appendChild(row);
       });
       panel.appendChild(heatmap);
