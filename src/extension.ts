@@ -59,7 +59,7 @@ export function activate(context: vscode.ExtensionContext): void {
   );
   context.subscriptions.push(dashboardProvider);
 
-  const treeProvider = new TeamTreeProvider(watcherService, i18nService);
+  const treeProvider = new TeamTreeProvider(watcherService, i18nService, sessionParser);
   const sidebarDashboard = new SidebarDashboardProvider(watcherService, i18nService, activityFeed);
   context.subscriptions.push(
     treeProvider,

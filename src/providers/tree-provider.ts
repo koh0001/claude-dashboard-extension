@@ -6,9 +6,11 @@ import * as vscode from 'vscode';
 import type { TeamSnapshot } from '../core/index.js';
 import { WatcherService } from '../services/watcher-service.js';
 import { I18nService } from '../services/i18n-service.js';
+import type { SessionParserService } from '../services/session-parser.js';
+import type { SubagentInfo } from '../types/messages.js';
 
 /** 트리 항목 타입 */
-type TreeItemType = 'team' | 'agent' | 'task';
+type TreeItemType = 'team' | 'agent' | 'task' | 'session' | 'subagent';
 
 /** 트리 노드 데이터 */
 interface TreeNodeData {
@@ -26,11 +28,13 @@ export class TeamTreeProvider implements vscode.TreeDataProvider<TreeNodeData> {
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
   private snapshots = new Map<string, TeamSnapshot>();
+  private subagents: SubagentInfo[] = [];
   private disposables: vscode.Disposable[] = [];
 
   constructor(
     private readonly watcherService: WatcherService,
     private readonly i18nService: I18nService,
+    private readonly sessionParser?: SessionParserService,
   ) {
     // 스냅샷 변경 시 트리 갱신
     this.disposables.push(
@@ -46,6 +50,16 @@ export class TeamTreeProvider implements vscode.TreeDataProvider<TreeNodeData> {
         this._onDidChangeTreeData.fire();
       }),
     );
+
+    // 서브에이전트 변경 시 트리 갱신
+    if (sessionParser) {
+      this.disposables.push(
+        sessionParser.onSubagentUpdate((agents) => {
+          this.subagents = agents;
+          this._onDidChangeTreeData.fire();
+        }),
+      );
+    }
 
     this.disposables.push(this._onDidChangeTreeData);
   }
@@ -86,6 +100,16 @@ export class TeamTreeProvider implements vscode.TreeDataProvider<TreeNodeData> {
           : new vscode.ThemeIcon('circle-outline');
         item.contextValue = 'task';
         break;
+      case 'session':
+        item.iconPath = new vscode.ThemeIcon('terminal');
+        item.contextValue = 'session';
+        break;
+      case 'subagent':
+        item.iconPath = element.status === 'completed'
+          ? new vscode.ThemeIcon('check', new vscode.ThemeColor('charts.green'))
+          : new vscode.ThemeIcon('loading~spin', new vscode.ThemeColor('charts.blue'));
+        item.contextValue = 'subagent';
+        break;
     }
 
     return item;
@@ -93,14 +117,46 @@ export class TeamTreeProvider implements vscode.TreeDataProvider<TreeNodeData> {
 
   getChildren(element?: TreeNodeData): TreeNodeData[] {
     if (!element) {
-      // 루트: 팀 목록
-      return Array.from(this.snapshots.entries()).map(([name, snap]) => ({
-        type: 'team' as const,
-        teamName: name,
-        label: snap.config.name,
-        description: `${snap.stats.completionRate}%`,
-        children: this.buildAgentNodes(name, snap),
-      }));
+      // 루트: 팀 목록 + 서브에이전트 세션
+      const nodes: TreeNodeData[] = [];
+
+      // Agent Teams
+      for (const [name, snap] of this.snapshots.entries()) {
+        nodes.push({
+          type: 'team' as const,
+          teamName: name,
+          label: snap.config.name,
+          description: `${snap.stats.completionRate}%`,
+          children: this.buildAgentNodes(name, snap),
+        });
+      }
+
+      // 서브에이전트 (세션별 그룹)
+      if (this.subagents.length > 0) {
+        const sessions: Record<string, SubagentInfo[]> = {};
+        for (const sa of this.subagents) {
+          if (!sessions[sa.sessionId]) sessions[sa.sessionId] = [];
+          sessions[sa.sessionId].push(sa);
+        }
+        for (const [sid, agents] of Object.entries(sessions)) {
+          const active = agents.filter((a) => a.status === 'active').length;
+          nodes.push({
+            type: 'session' as const,
+            teamName: sid,
+            label: `Session ${sid.slice(0, 8)}...`,
+            description: `${agents.length} agents${active > 0 ? ` (${active} active)` : ''}`,
+            children: agents.map((sa) => ({
+              type: 'subagent' as const,
+              teamName: sid,
+              label: sa.description,
+              description: sa.agentType.replace('oh-my-claudecode:', ''),
+              status: sa.status,
+            })),
+          });
+        }
+      }
+
+      return nodes;
     }
     return element.children || [];
   }
