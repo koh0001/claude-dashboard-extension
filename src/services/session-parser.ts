@@ -47,6 +47,7 @@ export class SessionParserService implements vscode.Disposable {
   private knownLines = new Map<string, number>(); // 파일별 읽은 줄 수
   private disposables: vscode.Disposable[] = [];
   private statsPath: string | null = null;
+  private statsLoaded = false; // stats에서 토큰 복원 여부
 
   /** 누적 토큰 사용량 */
   private tokenUsage: TokenUsage = {
@@ -100,6 +101,7 @@ export class SessionParserService implements vscode.Disposable {
         for (const f of (saved.parsedFiles || [])) {
           this.knownLines.set(f, -1);
         }
+        this.statsLoaded = true;
       }
     } catch {
       // 로드 실패 무시 — 처음부터 시작
@@ -167,6 +169,9 @@ export class SessionParserService implements vscode.Disposable {
     } catch {
       // 디렉토리 읽기 실패 무시
     }
+
+    // 초기 스캔 완료 — 이후 파일 변경에서는 토큰 정상 누적
+    this.statsLoaded = false;
 
     // 서브에이전트 스캔 (sessionsDir 하위 디렉토리들)
     this.scanSubagents(sessionsDir);
@@ -277,8 +282,8 @@ export class SessionParserService implements vscode.Disposable {
         return null; // 기타 도구는 무시
       }
 
-      // assistant 메시지에서 토큰 사용량 추출
-      if (entry.type === 'assistant' && entry.message?.usage) {
+      // assistant 메시지에서 토큰 사용량 추출 (stats 로드 시 초기 스캔에서는 건너뜀)
+      if (!this.statsLoaded && entry.type === 'assistant' && entry.message?.usage) {
         const u = entry.message.usage;
         const input = u.input_tokens || 0;
         const output = u.output_tokens || 0;
