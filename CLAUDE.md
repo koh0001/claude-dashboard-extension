@@ -105,6 +105,13 @@ MCP → McpService → HTTP JSON API (localhost) / .mcp.json 파싱
 - [x] 세션 기반 Metrics 대체 (Agent Teams 없을 때 파일편집/커맨드 비율 도넛)
 - [x] JSONL 구조 파싱 수정 (assistant→message.content[].tool_use 실제 구조 지원)
 - [x] 대용량 JSONL 최적화 (8MB+ 파일 끝 512KB만 읽기, 수정시간순 정렬)
+- [x] OMC 서브에이전트 대시보드 연동 (Overview/Tasks/Messages/Deps 탭)
+- [x] 언어 드롭다운 선택기 (ko/en/ja/zh, WebView 내 실시간 변경)
+- [x] 토큰 비율 도넛 차트 + 범례 (Metrics 탭)
+- [x] Teams 트리뷰 서브에이전트 세션별 목록 표시
+- [x] 대시보드 버전 표시 (검색 바 우측)
+- [x] 히트맵 2줄 레이아웃 (파일명 상단, 바 하단)
+- [x] 확장 호스트 중지 지연 근본 해결 (빈 deactivate, 프로세스 종료 의존)
 
 ## 코어 의존성
 

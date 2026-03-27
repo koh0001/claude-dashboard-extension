@@ -2,6 +2,28 @@
 
 All notable changes to Claude Flow Monitor will be documented in this file.
 
+## [1.5.1] - 2026-03-27
+
+### New Features
+- OMC subagent dashboard integration (Overview/Tasks/Messages/Deps tabs)
+- Language dropdown selector (ko/en/ja/zh) in search bar
+- Token donut chart + ratio bar with legends in Metrics tab
+- Teams tree view with subagent session grouping
+- Deps tab SVG arrows between sessions and subagents
+- Dashboard version display in search bar
+- Heatmap 2-line layout (filename top, bar bottom)
+
+### Fixes
+- Extension host shutdown delay — empty deactivate(), services auto-cleanup on process exit
+- Token double-counting — statsLoaded flag, incremental file reading by size tracking
+- totalTokens calculation — include cacheReadTokens in actual total
+- Git child process tracking/termination on dispose
+- Webhook HTTP request tracking/abort on dispose
+- WebView cleanup protocol — cleanup message before panel dispose
+- Session count based on actual JSONL file sources
+
+---
+
 ## [0.6.0] - 2026-03-27
 
 ### New Features
