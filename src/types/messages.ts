@@ -107,7 +107,7 @@ export interface TokenUsage {
 
 /** Extension → WebView 메시지 */
 export type ExtToWebMessage =
-  | { type: 'init'; data: InitPayload; translations: Record<string, string>; locale: string }
+  | { type: 'init'; data: InitPayload; translations: Record<string, string>; locale: string; version?: string }
   | { type: 'snapshotUpdate'; teamName: string; data: SnapshotPayload }
   | { type: 'translationsUpdate'; translations: Record<string, string>; locale: string }
   | { type: 'activityUpdate'; items: ActivityItem[] }

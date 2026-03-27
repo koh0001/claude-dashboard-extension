@@ -1153,6 +1153,13 @@ body {
 .cfm-lang-select:focus {
   border-color: var(--cfm-border-active);
 }
+.cfm-version {
+  font-size: 10px;
+  color: var(--cfm-text-muted);
+  font-family: var(--cfm-font-mono);
+  opacity: 0.6;
+  flex-shrink: 0;
+}
 
 /* === 토큰 사용량 패널 === */
 .cfm-token-panel {

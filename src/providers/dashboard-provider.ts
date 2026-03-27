@@ -185,11 +185,13 @@ export class DashboardProvider implements vscode.Disposable {
       if (!currentTeam) currentTeam = name;
     }
 
+    const ext = vscode.extensions.getExtension('koh-dev.claude-flow-monitor');
     this.postMessage({
       type: 'init',
       data: { teams, currentTeam },
       translations: this.i18nService.getWebViewTranslations(),
       locale: this.i18nService.locale,
+      version: ext?.packageJSON?.version,
     });
   }
 

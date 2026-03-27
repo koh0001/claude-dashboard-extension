@@ -1309,6 +1309,10 @@ export function getDashboardJs(): string {
         state.currentTeam = msg.data.currentTeam;
         state.translations = msg.translations || {};
         state.locale = msg.locale || 'ko';
+        var verEl = document.getElementById('cfm-version');
+        if (verEl && msg.version) verEl.textContent = 'v' + msg.version;
+        var lsInit = document.getElementById('lang-select');
+        if (lsInit) lsInit.value = state.locale;
         renderAll();
         break;
       case 'snapshotUpdate':

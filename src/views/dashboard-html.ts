@@ -34,6 +34,7 @@ export function getDashboardHtml(nonce: string): string {
         <option value="ja">日本語</option>
         <option value="zh">中文</option>
       </select>
+      <span class="cfm-version" id="cfm-version"></span>
     </div>
 
     <!-- 탭 네비게이션 -->
