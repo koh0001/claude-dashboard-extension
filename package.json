@@ -2,7 +2,7 @@
   "name": "claude-flow-monitor",
   "displayName": "Claude Flow Monitor",
   "description": "Real-time visualization of Claude Code workflows and Agent Teams",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "publisher": "koh-dev",
   "license": "MIT",
   "engines": {
