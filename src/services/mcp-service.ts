@@ -181,6 +181,8 @@ export class McpService implements vscode.Disposable {
   /** HTTP API 서버 중지 */
   stopServer(): void {
     if (!this.httpServer) return;
+    // 활성 연결을 즉시 종료하여 블로킹 방지
+    this.httpServer.closeAllConnections();
     this.httpServer.close();
     this.httpServer = null;
     this.port = null;
