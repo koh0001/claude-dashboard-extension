@@ -1370,8 +1370,11 @@ export function getDashboardJs(): string {
     }
   }
 
-  // 리셋 타이머 1초 간격 업데이트
-  setInterval(updateResetTimer, 1000);
+  // 리셋 타이머 1초 간격 업데이트 (WebView 종료 시 정리)
+  var resetInterval = setInterval(updateResetTimer, 1000);
+  window.addEventListener('beforeunload', function() {
+    clearInterval(resetInterval);
+  });
 
   // --- Empty State ---
   function renderEmpty(container, messageKey, hintKey) {

@@ -111,6 +111,7 @@ export class GitService implements vscode.Disposable {
 
   /** 실제 git log 스캔 실행 */
   private async _runScan(): Promise<void> {
+    if (this.disposed) return;
     const root = this._resolveWorkspaceRoot();
     if (!root) return;
     this.workspaceRoot = root;
@@ -251,7 +252,11 @@ export class GitService implements vscode.Disposable {
     }
   }
 
+  /** dispose 호출 여부 (진행 중인 스캔 즉시 중단) */
+  private disposed = false;
+
   dispose(): void {
+    this.disposed = true;
     if (this.debounceTimer !== null) {
       clearTimeout(this.debounceTimer);
       this.debounceTimer = null;

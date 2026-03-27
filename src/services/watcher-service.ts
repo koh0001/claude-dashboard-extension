@@ -201,7 +201,9 @@ export class WatcherService implements vscode.Disposable {
   }
 
   dispose(): void {
-    this.watcher.stop().catch(() => {});
+    // stop()은 내부적으로 동기 작업만 수행 (fs.watch close, clearInterval, clearTimeout)
+    // Promise를 fire-and-forget하면 VS Code가 완료 대기하므로 직접 호출
+    try { this.watcher.stop(); } catch { /* ignore */ }
     for (const d of this.disposables) d.dispose();
   }
 }
