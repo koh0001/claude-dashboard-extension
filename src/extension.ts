@@ -23,6 +23,9 @@ let outputChannel: vscode.OutputChannel;
 /** 상태 바 아이템 */
 let statusBarItem: vscode.StatusBarItem;
 
+/** 서비스 참조 (deactivate에서 논블로킹 정리) */
+let allServices: vscode.Disposable[] = [];
+
 export function activate(context: vscode.ExtensionContext): void {
   outputChannel = vscode.window.createOutputChannel('Claude Flow Monitor');
   outputChannel.appendLine('[INFO] Claude Flow Monitor 활성화 시작');
@@ -45,28 +48,28 @@ export function activate(context: vscode.ExtensionContext): void {
   // AI 파일 뱃지 프로바이더
   const fileDecoProvider = new AiFileDecorationProvider(sessionParser, gitService);
 
-  context.subscriptions.push(
-    watcherService, i18nService, workspaceMatcher,
-    sessionParser, activityFeed, gitService,
-    exportService, webhookService, mcpService,
-    fileDecoProvider, outputChannel,
-    vscode.window.registerFileDecorationProvider(fileDecoProvider),
-  );
+  // VS Code API 등록만 context.subscriptions에 (필수)
+  const fileDecoReg = vscode.window.registerFileDecorationProvider(fileDecoProvider);
+  context.subscriptions.push(fileDecoReg, outputChannel);
 
   // 2. 대시보드 프로바이더 (에디터 탭 WebviewPanel)
   const dashboardProvider = new DashboardProvider(
     context.extensionUri, watcherService, i18nService, sessionParser,
   );
-  context.subscriptions.push(dashboardProvider);
 
   const treeProvider = new TeamTreeProvider(watcherService, i18nService, sessionParser);
   const sidebarDashboard = new SidebarDashboardProvider(watcherService, i18nService, activityFeed);
-  context.subscriptions.push(
-    treeProvider,
-    sidebarDashboard,
-    vscode.window.registerTreeDataProvider('claudeFlowMonitor.teamTree', treeProvider),
-    vscode.window.registerWebviewViewProvider(SidebarDashboardProvider.viewType, sidebarDashboard),
-  );
+  const treeReg = vscode.window.registerTreeDataProvider('claudeFlowMonitor.teamTree', treeProvider);
+  const sidebarReg = vscode.window.registerWebviewViewProvider(SidebarDashboardProvider.viewType, sidebarDashboard);
+  context.subscriptions.push(treeReg, sidebarReg);
+
+  // 서비스는 deactivate에서 논블로킹 정리 (context.subscriptions에서 제외)
+  allServices = [
+    watcherService, i18nService, workspaceMatcher,
+    sessionParser, activityFeed, gitService,
+    exportService, webhookService, mcpService,
+    fileDecoProvider, dashboardProvider, treeProvider, sidebarDashboard,
+  ];
 
   // 3. 상태 바 + 미니 대시보드 (Markdown tooltip)
   statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 50);
@@ -249,5 +252,9 @@ export function activate(context: vscode.ExtensionContext): void {
 }
 
 export function deactivate(): void {
-  // context.subscriptions의 dispose()가 자동 호출됨
+  // 논블로킹 정리 — VS Code가 dispose 완료를 기다리지 않음
+  for (const svc of allServices) {
+    try { svc.dispose(); } catch { /* ignore */ }
+  }
+  allServices = [];
 }
