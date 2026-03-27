@@ -6,11 +6,25 @@
  */
 
 import * as vscode from 'vscode';
-import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
+import { execFile, type ChildProcess } from 'node:child_process';
 import type { ActivityItem } from '../types/messages.js';
 
-const execFileAsync = promisify(execFile);
+/** execFile를 Promise로 래핑하면서 ChildProcess 참조를 추적 */
+function execFileTracked(
+  cmd: string,
+  args: string[],
+  opts: Record<string, unknown>,
+  activeProcesses: Set<ChildProcess>,
+): Promise<{ stdout: string }> {
+  return new Promise((resolve, reject) => {
+    const proc = execFile(cmd, args, opts as Parameters<typeof execFile>[2], (err, stdout) => {
+      activeProcesses.delete(proc);
+      if (err) reject(err);
+      else resolve({ stdout: stdout as string });
+    });
+    activeProcesses.add(proc);
+  });
+}
 
 /** AI 커밋 여부를 포함한 커밋 정보 */
 export interface GitCommitInfo {
@@ -39,6 +53,8 @@ const AI_COAUTHOR_RE = /co-authored-by:.*?(claude|anthropic)/i;
 
 export class GitService implements vscode.Disposable {
   private disposables: vscode.Disposable[] = [];
+  /** 활성 자식 프로세스 추적 (dispose 시 종료) */
+  private activeProcesses = new Set<ChildProcess>();
 
   /** 새 AI 커밋 감지 시 발생 */
   private readonly _onCommits = new vscode.EventEmitter<GitCommitInfo[]>();
@@ -153,7 +169,7 @@ export class GitService implements vscode.Disposable {
   /** git 저장소 여부 확인 */
   private async _checkIsGitRepo(cwd: string): Promise<boolean> {
     try {
-      await execFileAsync('git', ['rev-parse', '--git-dir'], { cwd });
+      await execFileTracked('git', ['rev-parse', '--git-dir'], { cwd }, this.activeProcesses);
       return true;
     } catch {
       // git 미설치 또는 git 저장소 아님
@@ -176,10 +192,11 @@ export class GitService implements vscode.Disposable {
 
     let logOutput = '';
     try {
-      const { stdout } = await execFileAsync(
+      const { stdout } = await execFileTracked(
         'git',
         ['log', `--format=${formatStr}`, `--max-count=${MAX_LOG_COUNT}`],
         { cwd, maxBuffer: 10 * 1024 * 1024 },
+        this.activeProcesses,
       );
       logOutput = stdout;
     } catch {
@@ -238,10 +255,11 @@ export class GitService implements vscode.Disposable {
   /** 특정 커밋에서 변경된 파일 목록 조회 */
   private async _fetchCommitFiles(hash: string, cwd: string): Promise<string[]> {
     try {
-      const { stdout } = await execFileAsync(
+      const { stdout } = await execFileTracked(
         'git',
         ['diff-tree', '--no-commit-id', '-r', '--name-only', hash],
         { cwd },
+        this.activeProcesses,
       );
       return stdout
         .split('\n')
@@ -261,6 +279,11 @@ export class GitService implements vscode.Disposable {
       clearTimeout(this.debounceTimer);
       this.debounceTimer = null;
     }
+    // 활성 git 프로세스 즉시 종료
+    for (const proc of this.activeProcesses) {
+      try { proc.kill(); } catch { /* ignore */ }
+    }
+    this.activeProcesses.clear();
     for (const d of this.disposables) d.dispose();
   }
 }

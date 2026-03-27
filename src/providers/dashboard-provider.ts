@@ -196,6 +196,10 @@ export class DashboardProvider implements vscode.Disposable {
   }
 
   dispose(): void {
+    // WebView에 cleanup 메시지 전송 (타이머/리스너 정리)
+    if (this.panel && this.isReady) {
+      try { this.panel.webview.postMessage({ type: 'cleanup' }); } catch { /* ignore */ }
+    }
     this.panel?.dispose();
     for (const d of this.disposables) d.dispose();
   }

@@ -221,6 +221,7 @@ export class WebhookService implements vscode.Disposable {
         // 응답 바디 소비 (소비하지 않으면 연결이 닫히지 않음)
         res.resume();
         res.on('end', () => {
+          this.activeRequests.delete(req);
           const status = res.statusCode ?? 0;
           if (status >= 200 && status < 300) {
             resolve();
@@ -230,7 +231,8 @@ export class WebhookService implements vscode.Disposable {
         });
       });
 
-      req.on('error', (err) => reject(err));
+      this.activeRequests.add(req);
+      req.on('error', (err) => { this.activeRequests.delete(req); reject(err); });
 
       // 타임아웃 10초
       req.setTimeout(10_000, () => {
@@ -242,7 +244,15 @@ export class WebhookService implements vscode.Disposable {
     });
   }
 
+  /** 활성 HTTP 요청 추적 */
+  private activeRequests = new Set<import('node:http').ClientRequest>();
+
   dispose(): void {
+    // 활성 HTTP 요청 즉시 중단
+    for (const req of this.activeRequests) {
+      try { req.destroy(); } catch { /* ignore */ }
+    }
+    this.activeRequests.clear();
     for (const d of this.disposables) d.dispose();
   }
 }

@@ -24,6 +24,9 @@ export function getDashboardJs(): string {
     subagents: []
   };
 
+  // 정리 대상 타이머 (cleanup 메시지에서 접근)
+  var cfmSearchTimer = null;
+
   function t(key, params) {
     var text = state.translations[key] || key;
     if (params) {
@@ -1298,7 +1301,7 @@ export function getDashboardJs(): string {
   }
 
   // === 4. Message Handler ===
-  var ALLOWED_MSG_TYPES = ['init', 'snapshotUpdate', 'translationsUpdate', 'activityUpdate', 'themeChanged', 'todoUpdate', 'tokenUpdate', 'subagentUpdate'];
+  var ALLOWED_MSG_TYPES = ['init', 'snapshotUpdate', 'translationsUpdate', 'activityUpdate', 'themeChanged', 'todoUpdate', 'tokenUpdate', 'subagentUpdate', 'cleanup'];
   window.addEventListener('message', function(event) {
     var msg = event.data;
     if (!msg || typeof msg.type !== 'string') return;
@@ -1361,6 +1364,10 @@ export function getDashboardJs(): string {
           if (state.currentTab === 'deps') renderDeps(getSnap());
         }
         break;
+      case 'cleanup':
+        // 확장 종료 시 모든 타이머/리스너 정리
+        if (typeof cfmSearchTimer !== 'undefined' && cfmSearchTimer) clearTimeout(cfmSearchTimer);
+        break;
     }
   });
 
@@ -1387,13 +1394,12 @@ export function getDashboardJs(): string {
       }
     });
 
-    // 검색 입력 처리 (debounce)
-    var searchTimer = null;
+    // 검색 입력 처리 (debounce — cfmSearchTimer는 cleanup에서 접근)
     var searchEl = document.getElementById('search-input');
     if (searchEl) {
       searchEl.addEventListener('input', function(e) {
-        if (searchTimer) clearTimeout(searchTimer);
-        searchTimer = setTimeout(function() {
+        if (cfmSearchTimer) clearTimeout(cfmSearchTimer);
+        cfmSearchTimer = setTimeout(function() {
           state.searchQuery = e.target.value || '';
           renderCurrentTab();
         }, 150);
