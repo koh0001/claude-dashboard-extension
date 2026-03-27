@@ -1129,58 +1129,36 @@ export function getDashboardJs(): string {
     tokenTitle.style.margin = 'var(--cfm-space-lg) 0 var(--cfm-space-sm)';
     panel.appendChild(tokenTitle);
 
-    var tokenGrid = document.createElement('div');
-    tokenGrid.className = 'cfm-metrics-grid';
-
     function formatTokenCount(n) {
       if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
       if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
       return String(n);
     }
 
-    var tokenItems = [
-      { label: t('token.input'), value: tk.inputTokens, color: '#2196f3' },
-      { label: t('token.output'), value: tk.outputTokens, color: '#4caf50' },
-      { label: t('token.cacheCreate'), value: tk.cacheCreationTokens, color: '#ff9800' },
-      { label: t('token.cacheRead'), value: tk.cacheReadTokens, color: '#9c27b0' },
-    ];
-    tokenItems.forEach(function(item) {
-      var card = document.createElement('div');
-      card.className = 'cfm-metric-card';
-      var val = document.createElement('div');
-      val.className = 'cfm-metric-value';
-      val.style.color = item.color;
-      val.textContent = formatTokenCount(item.value);
-      var lbl = document.createElement('div');
-      lbl.className = 'cfm-metric-label';
-      lbl.textContent = item.label;
-      card.appendChild(val);
-      card.appendChild(lbl);
-      tokenGrid.appendChild(card);
-    });
-    panel.appendChild(tokenGrid);
+    // 총 토큰 (cacheRead 포함 정확한 합산)
+    var actualTotal = tk.inputTokens + tk.outputTokens + tk.cacheCreationTokens + tk.cacheReadTokens;
 
-    // 총 토큰 바
+    // 총 토큰 바 (그래프 먼저)
     var totalBar = document.createElement('div');
     totalBar.className = 'cfm-token-total';
     var totalLabel = document.createElement('span');
     totalLabel.textContent = t('token.total');
     var totalValue = document.createElement('span');
     totalValue.className = 'cfm-token-total-value';
-    totalValue.textContent = formatTokenCount(tk.totalTokens);
+    totalValue.textContent = formatTokenCount(actualTotal);
     totalBar.appendChild(totalLabel);
     totalBar.appendChild(totalValue);
     panel.appendChild(totalBar);
 
     // 토큰 비율 바 + 범례
-    if (tk.totalTokens > 0) {
+    if (actualTotal > 0) {
       var ratioBar = document.createElement('div');
       ratioBar.className = 'cfm-token-ratio';
       var segments = [
-        { pct: (tk.inputTokens / tk.totalTokens) * 100, color: '#2196f3', label: t('token.input') },
-        { pct: (tk.outputTokens / tk.totalTokens) * 100, color: '#4caf50', label: t('token.output') },
-        { pct: (tk.cacheCreationTokens / tk.totalTokens) * 100, color: '#ff9800', label: t('token.cacheCreate') },
-        { pct: (tk.cacheReadTokens / tk.totalTokens) * 100, color: '#9c27b0', label: t('token.cacheRead') },
+        { pct: (tk.inputTokens / actualTotal) * 100, color: '#2196f3', label: t('token.input') },
+        { pct: (tk.outputTokens / actualTotal) * 100, color: '#4caf50', label: t('token.output') },
+        { pct: (tk.cacheCreationTokens / actualTotal) * 100, color: '#ff9800', label: t('token.cacheCreate') },
+        { pct: (tk.cacheReadTokens / actualTotal) * 100, color: '#9c27b0', label: t('token.cacheRead') },
       ];
       segments.forEach(function(seg) {
         if (seg.pct > 0) {
@@ -1210,6 +1188,32 @@ export function getDashboardJs(): string {
       });
       panel.appendChild(legend);
     }
+
+    // 토큰 카드 표 (그래프 아래)
+    var tokenGrid = document.createElement('div');
+    tokenGrid.className = 'cfm-metrics-grid';
+    tokenGrid.style.marginTop = 'var(--cfm-space-md)';
+    var tokenItems = [
+      { label: t('token.input'), value: tk.inputTokens, color: '#2196f3' },
+      { label: t('token.output'), value: tk.outputTokens, color: '#4caf50' },
+      { label: t('token.cacheCreate'), value: tk.cacheCreationTokens, color: '#ff9800' },
+      { label: t('token.cacheRead'), value: tk.cacheReadTokens, color: '#9c27b0' },
+    ];
+    tokenItems.forEach(function(item) {
+      var card = document.createElement('div');
+      card.className = 'cfm-metric-card';
+      var val = document.createElement('div');
+      val.className = 'cfm-metric-value';
+      val.style.color = item.color;
+      val.textContent = formatTokenCount(item.value);
+      var lbl = document.createElement('div');
+      lbl.className = 'cfm-metric-label';
+      lbl.textContent = item.label;
+      card.appendChild(val);
+      card.appendChild(lbl);
+      tokenGrid.appendChild(card);
+    });
+    panel.appendChild(tokenGrid);
   }
 
   function createMetricDonut(label, percent, subtitle, color) {
