@@ -23,8 +23,6 @@ let outputChannel: vscode.OutputChannel;
 /** 상태 바 아이템 */
 let statusBarItem: vscode.StatusBarItem;
 
-/** 서비스 참조 (deactivate에서 논블로킹 정리) */
-let allServices: vscode.Disposable[] = [];
 
 export function activate(context: vscode.ExtensionContext): void {
   outputChannel = vscode.window.createOutputChannel('Claude Flow Monitor');
@@ -63,13 +61,7 @@ export function activate(context: vscode.ExtensionContext): void {
   const sidebarReg = vscode.window.registerWebviewViewProvider(SidebarDashboardProvider.viewType, sidebarDashboard);
   context.subscriptions.push(treeReg, sidebarReg);
 
-  // 서비스는 deactivate에서 논블로킹 정리 (context.subscriptions에서 제외)
-  allServices = [
-    watcherService, i18nService, workspaceMatcher,
-    sessionParser, activityFeed, gitService,
-    exportService, webhookService, mcpService,
-    fileDecoProvider, dashboardProvider, treeProvider, sidebarDashboard,
-  ];
+  // 서비스는 프로세스 종료 시 자동 해제 (context.subscriptions 불필요)
 
   // 3. 상태 바 + 미니 대시보드 (Markdown tooltip)
   statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 50);
@@ -252,9 +244,7 @@ export function activate(context: vscode.ExtensionContext): void {
 }
 
 export function deactivate(): void {
-  // 논블로킹 정리 — VS Code가 dispose 완료를 기다리지 않음
-  for (const svc of allServices) {
-    try { svc.dispose(); } catch { /* ignore */ }
-  }
-  allServices = [];
+  // 즉시 반환 — 모든 리소스는 프로세스 종료 시 자동 해제됨
+  // (fs.watch, HTTP 서버, 타이머, 자식 프로세스 등)
+  // 수동 dispose가 오히려 VS Code의 확장 호스트 중지를 지연시킴
 }
