@@ -1126,66 +1126,6 @@ export function getDashboardJs(): string {
     tokenTitle.style.margin = 'var(--cfm-space-lg) 0 var(--cfm-space-sm)';
     panel.appendChild(tokenTitle);
 
-    // 토큰 도넛 차트 (비율 시각화)
-    if (tk.totalTokens > 0) {
-      var tokenChartWrap = document.createElement('div');
-      tokenChartWrap.className = 'cfm-token-chart-wrap';
-
-      var donutSize = 120;
-      var donutSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      donutSvg.setAttribute('viewBox', '0 0 36 36');
-      donutSvg.setAttribute('width', String(donutSize));
-      donutSvg.setAttribute('height', String(donutSize));
-      donutSvg.setAttribute('class', 'cfm-donut-svg');
-
-      var trackCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      trackCircle.setAttribute('cx', '18'); trackCircle.setAttribute('cy', '18'); trackCircle.setAttribute('r', '15.9155');
-      trackCircle.setAttribute('class', 'cfm-donut-track');
-      donutSvg.appendChild(trackCircle);
-
-      var tokenParts = [
-        { value: tk.inputTokens, color: '#2196f3' },
-        { value: tk.outputTokens, color: '#4caf50' },
-        { value: tk.cacheCreationTokens, color: '#ff9800' },
-        { value: tk.cacheReadTokens, color: '#9c27b0' },
-      ];
-      var offset = 0;
-      tokenParts.forEach(function(part) {
-        if (part.value <= 0) return;
-        var pct = (part.value / tk.totalTokens) * 100;
-        var arc = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        arc.setAttribute('cx', '18'); arc.setAttribute('cy', '18'); arc.setAttribute('r', '15.9155');
-        arc.setAttribute('fill', 'none');
-        arc.setAttribute('stroke', part.color);
-        arc.setAttribute('stroke-width', '3.5');
-        arc.setAttribute('stroke-dasharray', pct + ' ' + (100 - pct));
-        arc.setAttribute('stroke-dashoffset', String(-offset));
-        arc.setAttribute('stroke-linecap', 'round');
-        donutSvg.appendChild(arc);
-        offset += pct;
-      });
-
-      tokenChartWrap.appendChild(donutSvg);
-
-      // 범례
-      var legend = document.createElement('div');
-      legend.className = 'cfm-token-legend';
-      tokenParts.forEach(function(part, i) {
-        var labels = [t('token.input'), t('token.output'), t('token.cacheCreate'), t('token.cacheRead')];
-        if (part.value <= 0) return;
-        var item = document.createElement('span');
-        item.className = 'cfm-token-legend-item';
-        var dot = document.createElement('span');
-        dot.className = 'cfm-token-legend-dot';
-        dot.style.background = part.color;
-        item.appendChild(dot);
-        item.appendChild(document.createTextNode(labels[i] + ' ' + Math.round((part.value / tk.totalTokens) * 100) + '%'));
-        legend.appendChild(item);
-      });
-      tokenChartWrap.appendChild(legend);
-      panel.appendChild(tokenChartWrap);
-    }
-
     var tokenGrid = document.createElement('div');
     tokenGrid.className = 'cfm-metrics-grid';
 
@@ -1229,15 +1169,15 @@ export function getDashboardJs(): string {
     totalBar.appendChild(totalValue);
     panel.appendChild(totalBar);
 
-    // 토큰 비율 바
+    // 토큰 비율 바 + 범례
     if (tk.totalTokens > 0) {
       var ratioBar = document.createElement('div');
       ratioBar.className = 'cfm-token-ratio';
       var segments = [
-        { pct: (tk.inputTokens / tk.totalTokens) * 100, color: '#2196f3' },
-        { pct: (tk.outputTokens / tk.totalTokens) * 100, color: '#4caf50' },
-        { pct: (tk.cacheCreationTokens / tk.totalTokens) * 100, color: '#ff9800' },
-        { pct: (tk.cacheReadTokens / tk.totalTokens) * 100, color: '#9c27b0' },
+        { pct: (tk.inputTokens / tk.totalTokens) * 100, color: '#2196f3', label: t('token.input') },
+        { pct: (tk.outputTokens / tk.totalTokens) * 100, color: '#4caf50', label: t('token.output') },
+        { pct: (tk.cacheCreationTokens / tk.totalTokens) * 100, color: '#ff9800', label: t('token.cacheCreate') },
+        { pct: (tk.cacheReadTokens / tk.totalTokens) * 100, color: '#9c27b0', label: t('token.cacheRead') },
       ];
       segments.forEach(function(seg) {
         if (seg.pct > 0) {
@@ -1249,6 +1189,23 @@ export function getDashboardJs(): string {
         }
       });
       panel.appendChild(ratioBar);
+
+      // 범례
+      var legend = document.createElement('div');
+      legend.className = 'cfm-token-panel-legend';
+      legend.style.marginTop = 'var(--cfm-space-xs)';
+      segments.forEach(function(seg) {
+        if (seg.pct <= 0) return;
+        var item = document.createElement('span');
+        item.className = 'cfm-tl-item';
+        var dot = document.createElement('span');
+        dot.className = 'cfm-tl-dot';
+        dot.style.background = seg.color;
+        item.appendChild(dot);
+        item.appendChild(document.createTextNode(seg.label + ' ' + Math.round(seg.pct) + '%'));
+        legend.appendChild(item);
+      });
+      panel.appendChild(legend);
     }
   }
 
@@ -1320,7 +1277,17 @@ export function getDashboardJs(): string {
     return String(n);
   }
 
+  // 세션 시작 시간 기록 (첫 토큰 수신 시)
+  var sessionStartTime = null;
+  var RESET_INTERVAL_MS = 5 * 60 * 60 * 1000; // 5시간
+
   function updateTokenSummary(usage) {
+    // 세션 시작 시간 기록
+    if (!sessionStartTime && usage.totalTokens > 0) {
+      sessionStartTime = Date.now();
+    }
+
+    // 텍스트 업데이트
     var el;
     el = document.getElementById('ts-input');
     if (el) el.textContent = formatTokenShort(usage.inputTokens);
@@ -1331,15 +1298,48 @@ export function getDashboardJs(): string {
     el = document.getElementById('ts-total');
     if (el) el.textContent = formatTokenShort(usage.totalTokens);
 
-    // 상단 비율 바 그래프 업데이트
+    // 도넛 차트 업데이트
+    var donutSvg = document.getElementById('ts-donut');
+    if (donutSvg && usage.totalTokens > 0) {
+      // 기존 arc 제거 (track 유지)
+      var arcs = donutSvg.querySelectorAll('.ts-arc');
+      arcs.forEach(function(a) { a.remove(); });
+
+      var tokenParts = [
+        { value: usage.inputTokens, color: '#2196f3' },
+        { value: usage.outputTokens, color: '#4caf50' },
+        { value: usage.cacheCreationTokens + usage.cacheReadTokens, color: '#ff9800' },
+      ];
+      var offset = 0;
+      tokenParts.forEach(function(part) {
+        if (part.value <= 0) return;
+        var pct = (part.value / usage.totalTokens) * 100;
+        var arc = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        arc.setAttribute('cx', '18'); arc.setAttribute('cy', '18'); arc.setAttribute('r', '15.9');
+        arc.setAttribute('fill', 'none');
+        arc.setAttribute('stroke', part.color);
+        arc.setAttribute('stroke-width', '3');
+        arc.setAttribute('stroke-dasharray', pct + ' ' + (100 - pct));
+        arc.setAttribute('stroke-dashoffset', String(-offset));
+        arc.setAttribute('class', 'ts-arc');
+        donutSvg.appendChild(arc);
+        offset += pct;
+      });
+
+      // 퍼센트 표시 (입력+출력 비율)
+      var ioRatio = Math.round(((usage.inputTokens + usage.outputTokens) / usage.totalTokens) * 100);
+      el = document.getElementById('ts-pct');
+      if (el) el.textContent = ioRatio + '%';
+    }
+
+    // 비율 바 업데이트
     var barEl = document.getElementById('ts-ratio-bar');
     if (barEl && usage.totalTokens > 0) {
       barEl.textContent = '';
       var parts = [
         { pct: (usage.inputTokens / usage.totalTokens) * 100, color: '#2196f3' },
         { pct: (usage.outputTokens / usage.totalTokens) * 100, color: '#4caf50' },
-        { pct: (usage.cacheCreationTokens / usage.totalTokens) * 100, color: '#ff9800' },
-        { pct: (usage.cacheReadTokens / usage.totalTokens) * 100, color: '#9c27b0' },
+        { pct: ((usage.cacheCreationTokens + usage.cacheReadTokens) / usage.totalTokens) * 100, color: '#ff9800' },
       ];
       parts.forEach(function(p) {
         if (p.pct > 0) {
@@ -1350,7 +1350,28 @@ export function getDashboardJs(): string {
         }
       });
     }
+
+    // 리셋 타이머 업데이트
+    updateResetTimer();
   }
+
+  function updateResetTimer() {
+    var resetEl = document.getElementById('ts-reset');
+    if (!resetEl || !sessionStartTime) return;
+    var elapsed = Date.now() - sessionStartTime;
+    var remaining = Math.max(0, RESET_INTERVAL_MS - elapsed);
+    var h = Math.floor(remaining / 3600000);
+    var m = Math.floor((remaining % 3600000) / 60000);
+    var s = Math.floor((remaining % 60000) / 1000);
+    resetEl.textContent = '\\u23F1 ' + h + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    if (remaining <= 0) {
+      resetEl.textContent = '\\u23F1 reset!';
+      resetEl.style.color = '#4caf50';
+    }
+  }
+
+  // 리셋 타이머 1초 간격 업데이트
+  setInterval(updateResetTimer, 1000);
 
   // --- Empty State ---
   function renderEmpty(container, messageKey, hintKey) {

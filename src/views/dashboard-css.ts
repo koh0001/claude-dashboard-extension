@@ -1154,22 +1154,86 @@ body {
   border-color: var(--cfm-border-active);
 }
 
-/* === 토큰 사용량 요약 바 === */
-.cfm-token-summary {
+/* === 토큰 사용량 패널 === */
+.cfm-token-panel {
   display: flex;
   align-items: center;
-  gap: var(--cfm-space-sm);
-  padding: 4px var(--cfm-space-sm);
-  font-size: var(--cfm-font-size-xs);
-  color: var(--cfm-text-muted);
+  gap: var(--cfm-space-md);
+  padding: var(--cfm-space-sm) var(--cfm-space-md);
   background: var(--cfm-overlay-subtle);
-  border-radius: var(--cfm-radius-sm);
-  margin-bottom: var(--cfm-space-sm);
+  border-radius: var(--cfm-radius-md);
+  border: 1px solid var(--cfm-border-default);
+  margin-bottom: var(--cfm-space-md);
 }
-.cfm-token-item { font-family: var(--cfm-font-mono); }
-.cfm-token-item span { font-weight: var(--cfm-font-weight-bold); }
-.cfm-token-total { color: var(--cfm-text-primary); }
-.cfm-token-sep { color: var(--cfm-text-muted); opacity: 0.3; }
+.cfm-token-panel-left {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.cfm-token-panel-pct {
+  position: absolute;
+  font-size: 10px;
+  font-weight: var(--cfm-font-weight-bold);
+  color: var(--cfm-text-primary);
+}
+.cfm-token-panel-center {
+  flex: 1;
+  min-width: 0;
+}
+.cfm-token-panel-total {
+  font-size: var(--cfm-font-size-sm);
+  font-weight: var(--cfm-font-weight-bold);
+  color: var(--cfm-text-primary);
+  margin-bottom: 4px;
+}
+.cfm-token-panel-total span { font-family: var(--cfm-font-mono); }
+.cfm-token-panel-bar {
+  display: flex;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 4px;
+  background: var(--cfm-overlay-light);
+}
+.cfm-token-panel-bar > div { height: 100%; min-width: 2px; }
+.cfm-token-panel-legend {
+  display: flex;
+  gap: var(--cfm-space-sm);
+  font-size: 10px;
+  color: var(--cfm-text-muted);
+  flex-wrap: wrap;
+}
+.cfm-tl-item {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--cfm-font-mono);
+}
+.cfm-tl-item span:last-child { font-weight: var(--cfm-font-weight-bold); }
+.cfm-tl-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.cfm-token-panel-right {
+  text-align: center;
+  flex-shrink: 0;
+}
+.cfm-token-reset {
+  font-size: var(--cfm-font-size-sm);
+  font-weight: var(--cfm-font-weight-bold);
+  font-family: var(--cfm-font-mono);
+  color: var(--cfm-text-primary);
+}
+.cfm-token-reset-label {
+  font-size: 9px;
+  color: var(--cfm-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
 .cfm-token-chart-wrap {
   display: flex;
   align-items: center;
