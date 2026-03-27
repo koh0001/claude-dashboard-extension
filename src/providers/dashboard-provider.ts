@@ -58,6 +58,13 @@ export class DashboardProvider implements vscode.Disposable {
       }),
     );
 
+    // 서브에이전트 구독
+    this.disposables.push(
+      sessionParser.onSubagentUpdate((agents) => {
+        this.postMessage({ type: 'subagentUpdate', agents });
+      }),
+    );
+
     // 테마 변경 구독
     this.disposables.push(
       vscode.window.onDidChangeActiveColorTheme(() => {

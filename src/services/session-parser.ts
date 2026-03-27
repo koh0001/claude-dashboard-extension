@@ -8,7 +8,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import type { ActivityItem, TokenUsage } from '../types/messages.js';
+import type { ActivityItem, TokenUsage, SubagentInfo } from '../types/messages.js';
 
 /** JSONL 라인의 파싱 결과 */
 interface SessionEntry {
@@ -63,8 +63,19 @@ export class SessionParserService implements vscode.Disposable {
   private readonly _onTokenUpdate = new vscode.EventEmitter<TokenUsage>();
   readonly onTokenUpdate = this._onTokenUpdate.event;
 
+  private readonly _onSubagentUpdate = new vscode.EventEmitter<SubagentInfo[]>();
+  readonly onSubagentUpdate = this._onSubagentUpdate.event;
+
+  /** 서브에이전트 캐시 */
+  private subagents: SubagentInfo[] = [];
+
   constructor() {
-    this.disposables.push(this._onActivity, this._onTokenUpdate);
+    this.disposables.push(this._onActivity, this._onTokenUpdate, this._onSubagentUpdate);
+  }
+
+  /** 현재 서브에이전트 목록 */
+  getSubagents(): SubagentInfo[] {
+    return [...this.subagents];
   }
 
   /** 현재 누적 토큰 사용량 */
@@ -156,6 +167,9 @@ export class SessionParserService implements vscode.Disposable {
     } catch {
       // 디렉토리 읽기 실패 무시
     }
+
+    // 서브에이전트 스캔 (sessionsDir 하위 디렉토리들)
+    this.scanSubagents(sessionsDir);
 
     // 디렉토리 감시
     try {
@@ -298,6 +312,65 @@ export class SessionParserService implements vscode.Disposable {
       }
       this._onActivity.fire(items);
       this.saveStats();
+    }
+  }
+
+  /** 서브에이전트 meta.json 스캔 */
+  private scanSubagents(sessionsDir: string): void {
+    try {
+      // sessionsDir 하위의 세션 디렉토리들을 탐색
+      const entries = fs.readdirSync(sessionsDir, { withFileTypes: true });
+      const agents: SubagentInfo[] = [];
+
+      for (const entry of entries) {
+        if (!entry.isDirectory()) continue;
+        const subagentsDir = path.join(sessionsDir, entry.name, 'subagents');
+        if (!fs.existsSync(subagentsDir)) continue;
+
+        const subEntries = fs.readdirSync(subagentsDir, { withFileTypes: true });
+        for (const sub of subEntries) {
+          if (!sub.isFile() || !sub.name.endsWith('.meta.json')) continue;
+
+          const metaPath = path.join(subagentsDir, sub.name);
+          const jsonlName = sub.name.replace('.meta.json', '.jsonl');
+          const jsonlPath = path.join(subagentsDir, jsonlName);
+
+          try {
+            const meta = JSON.parse(fs.readFileSync(metaPath, 'utf-8'));
+            const agentId = sub.name.replace('.meta.json', '');
+            let lineCount = 0;
+            let status: 'active' | 'completed' = 'completed';
+
+            if (fs.existsSync(jsonlPath)) {
+              const stat = fs.statSync(jsonlPath);
+              // 대략적 줄 수 추정 (평균 줄 길이 ~500바이트)
+              lineCount = Math.max(1, Math.round(stat.size / 500));
+              // 최근 30초 이내 수정 → active
+              if (Date.now() - stat.mtimeMs < 30000) {
+                status = 'active';
+              }
+            }
+
+            agents.push({
+              id: agentId,
+              agentType: meta.agentType || 'unknown',
+              description: meta.description || agentId,
+              status,
+              sessionId: entry.name,
+              lineCount,
+            });
+          } catch {
+            // 개별 meta.json 파싱 실패 무시
+          }
+        }
+      }
+
+      if (agents.length > 0) {
+        this.subagents = agents;
+        this._onSubagentUpdate.fire(agents);
+      }
+    } catch {
+      // 스캔 실패 무시
     }
   }
 

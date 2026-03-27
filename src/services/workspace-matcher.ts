@@ -8,7 +8,6 @@
 import * as vscode from 'vscode';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import * as crypto from 'node:crypto';
 
 export interface ProjectMatch {
   /** VS Code 워크스페이스 경로 */

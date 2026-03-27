@@ -125,6 +125,13 @@ export const zh = {
   'summary.generated': '摘要报告已生成',
   'summary.noData': '没有可用于摘要的数据',
 
+  'subagent.title': '子代理',
+  'subagent.noAgents': '无子代理',
+  'subagent.active': '活跃',
+  'subagent.completed': '已完成',
+  'subagent.lines': '{count}行',
+  'lang.change': '更改语言',
+
   'task.headerDuration': '耗时',
   'task.headerTokens': 'Token',
   'task.estimated': '≈ 估算',

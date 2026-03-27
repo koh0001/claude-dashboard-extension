@@ -20,7 +20,8 @@ export function getDashboardJs(): string {
     taskView: 'table',
     searchQuery: '',
     todoItems: [],
-    tokenUsage: { inputTokens: 0, outputTokens: 0, cacheCreationTokens: 0, cacheReadTokens: 0, totalTokens: 0 }
+    tokenUsage: { inputTokens: 0, outputTokens: 0, cacheCreationTokens: 0, cacheReadTokens: 0, totalTokens: 0 },
+    subagents: []
   };
 
   function t(key, params) {
@@ -185,7 +186,54 @@ export function getDashboardJs(): string {
     var panel = document.getElementById('panel-overview');
     if (!panel) return;
     panel.textContent = '';
-    if (!snap) { renderEmpty(panel, 'empty.noTeams', 'empty.noTeamsHint'); return; }
+
+    // 서브에이전트 표시 (Agent Teams 없어도)
+    if (state.subagents.length > 0) {
+      var saTitle = document.createElement('h3');
+      saTitle.textContent = t('subagent.title') + ' (' + state.subagents.length + ')';
+      saTitle.style.marginBottom = 'var(--cfm-space-sm)';
+      panel.appendChild(saTitle);
+
+      var saGrid = document.createElement('div');
+      saGrid.className = 'cfm-agent-grid';
+      var typeColors = { 'Explore': '#2196f3', 'executor': '#4caf50', 'architect': '#ff9800', 'code-reviewer': '#9c27b0', 'security-reviewer': '#f44336', 'planner': '#00bcd4', 'writer': '#795548' };
+      state.subagents.forEach(function(sa) {
+        var card = document.createElement('div');
+        card.className = 'cfm-agent-card';
+        card.setAttribute('data-status', sa.status);
+        var baseType = sa.agentType.replace('oh-my-claudecode:', '');
+        card.style.setProperty('--agent-color', typeColors[baseType] || typeColors[sa.agentType] || '#78909c');
+
+        var header = document.createElement('div');
+        header.className = 'cfm-agent-header';
+        var name = document.createElement('span');
+        name.className = 'cfm-agent-name';
+        name.textContent = escapeHtml(baseType);
+        var badge = document.createElement('span');
+        badge.className = 'cfm-status-badge';
+        badge.setAttribute('data-status', sa.status === 'active' ? 'in_progress' : 'completed');
+        badge.textContent = sa.status === 'active' ? t('subagent.active') : t('subagent.completed');
+        header.appendChild(name);
+        header.appendChild(badge);
+        card.appendChild(header);
+
+        var desc = document.createElement('div');
+        desc.className = 'cfm-agent-desc';
+        desc.textContent = escapeHtml(sa.description);
+        card.appendChild(desc);
+
+        var meta = document.createElement('div');
+        meta.className = 'cfm-agent-task';
+        meta.textContent = t('subagent.lines', { count: sa.lineCount });
+        card.appendChild(meta);
+
+        saGrid.appendChild(card);
+      });
+      panel.appendChild(saGrid);
+    }
+
+    if (!snap && state.subagents.length === 0) { renderEmpty(panel, 'empty.noTeams', 'empty.noTeamsHint'); return; }
+    if (!snap) return;
 
     var title = document.createElement('h3');
     title.textContent = t('agent.sectionTitle', { count: snap.agents.length });
@@ -244,7 +292,24 @@ export function getDashboardJs(): string {
     var panel = document.getElementById('panel-tasks');
     if (!panel) return;
     panel.textContent = '';
-    if (!snap || snap.tasks.length === 0) { renderEmpty(panel, 'empty.noTasks'); return; }
+
+    // 서브에이전트를 가상 태스크로 변환
+    var virtualTasks = state.subagents.map(function(sa, i) {
+      return {
+        id: 'sa-' + (i + 1),
+        title: sa.description,
+        assignee: sa.agentType.replace('oh-my-claudecode:', ''),
+        status: sa.status === 'active' ? 'in_progress' : 'completed',
+        blockedBy: [], blocks: []
+      };
+    });
+
+    // snap 태스크 + 가상 태스크 병합
+    var allTasks = snap ? snap.tasks.concat(virtualTasks) : virtualTasks;
+    if (allTasks.length === 0) { renderEmpty(panel, 'empty.noTasks'); return; }
+
+    // snap이 없으면 가상 snap 생성
+    if (!snap) { snap = { tasks: virtualTasks, stats: {} }; }
 
     // 검색 필터 적용
     var filteredSnap = snap;
@@ -1071,7 +1136,7 @@ export function getDashboardJs(): string {
   }
 
   // === 4. Message Handler ===
-  var ALLOWED_MSG_TYPES = ['init', 'snapshotUpdate', 'translationsUpdate', 'activityUpdate', 'themeChanged', 'todoUpdate', 'tokenUpdate'];
+  var ALLOWED_MSG_TYPES = ['init', 'snapshotUpdate', 'translationsUpdate', 'activityUpdate', 'themeChanged', 'todoUpdate', 'tokenUpdate', 'subagentUpdate'];
   window.addEventListener('message', function(event) {
     var msg = event.data;
     if (!msg || typeof msg.type !== 'string') return;
@@ -1120,6 +1185,14 @@ export function getDashboardJs(): string {
           if (state.currentTab === 'metrics') renderMetrics(getSnap());
         }
         break;
+      case 'subagentUpdate':
+        if (msg.agents) {
+          state.subagents = msg.agents;
+          if (state.currentTab === 'overview') renderOverview(getSnap());
+          if (state.currentTab === 'tasks') renderTasks(getSnap());
+          if (state.currentTab === 'deps') renderDeps(getSnap());
+        }
+        break;
     }
   });
 
@@ -1156,6 +1229,14 @@ export function getDashboardJs(): string {
           state.searchQuery = e.target.value || '';
           renderCurrentTab();
         }, 150);
+      });
+    }
+
+    // 언어 변경 버튼
+    var langBtn = document.getElementById('lang-btn');
+    if (langBtn) {
+      langBtn.addEventListener('click', function() {
+        vscode.postMessage({ type: 'changeLanguage' });
       });
     }
 

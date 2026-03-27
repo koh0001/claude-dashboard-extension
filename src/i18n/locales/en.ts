@@ -125,6 +125,13 @@ export const en = {
   'summary.generated': 'Summary report has been generated',
   'summary.noData': 'No data available for summary',
 
+  'subagent.title': 'Subagents',
+  'subagent.noAgents': 'No subagents',
+  'subagent.active': 'Active',
+  'subagent.completed': 'Completed',
+  'subagent.lines': '{count} lines',
+  'lang.change': 'Change Language',
+
   'task.headerDuration': 'Duration',
   'task.headerTokens': 'Tokens',
   'task.estimated': '≈ est.',

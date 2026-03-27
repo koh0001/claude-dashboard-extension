@@ -24,10 +24,11 @@ export function getDashboardHtml(nonce: string): string {
     <!-- 접근성: 콘텐츠 건너뛰기 -->
     <a href="#cfm-content" class="cfm-skip-link" id="skip-link"></a>
 
-    <!-- 검색 바 -->
+    <!-- 검색 바 + 언어 변경 -->
     <div class="cfm-search" id="search-bar">
       <span class="cfm-search-icon">&#x1F50D;</span>
       <input type="text" class="cfm-search-input" id="search-input" autocomplete="off" spellcheck="false">
+      <button class="cfm-lang-btn" id="lang-btn" title="Change Language">&#x1F310;</button>
     </div>
 
     <!-- 탭 네비게이션 -->

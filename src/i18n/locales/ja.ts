@@ -125,6 +125,13 @@ export const ja = {
   'summary.generated': 'サマリーレポートが生成されました',
   'summary.noData': 'サマリーするデータがありません',
 
+  'subagent.title': 'サブエージェント',
+  'subagent.noAgents': 'サブエージェントなし',
+  'subagent.active': 'アクティブ',
+  'subagent.completed': '完了',
+  'subagent.lines': '{count}行',
+  'lang.change': '言語変更',
+
   'task.headerDuration': '所要時間',
   'task.headerTokens': 'トークン',
   'task.estimated': '≈ 推定',

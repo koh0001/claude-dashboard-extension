@@ -85,6 +85,16 @@ export interface ActivityItem {
   source?: string;
 }
 
+/** 서브에이전트 정보 (OMC/Claude Code 서브에이전트) */
+export interface SubagentInfo {
+  id: string;
+  agentType: string;
+  description: string;
+  status: 'active' | 'completed';
+  sessionId: string;
+  lineCount: number;
+}
+
 /** 토큰 사용량 */
 export interface TokenUsage {
   inputTokens: number;
@@ -101,6 +111,7 @@ export type ExtToWebMessage =
   | { type: 'translationsUpdate'; translations: Record<string, string>; locale: string }
   | { type: 'activityUpdate'; items: ActivityItem[] }
   | { type: 'tokenUpdate'; usage: TokenUsage }
+  | { type: 'subagentUpdate'; agents: SubagentInfo[] }
   | { type: 'themeChanged'; themeKind: string };
 
 /** 알림 페이로드 */

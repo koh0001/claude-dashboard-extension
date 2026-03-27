@@ -127,6 +127,13 @@ export const ko = {
   'summary.generated': '요약 리포트가 생성되었습니다',
   'summary.noData': '요약할 데이터가 없습니다',
 
+  'subagent.title': '서브에이전트',
+  'subagent.noAgents': '서브에이전트 없음',
+  'subagent.active': '활성',
+  'subagent.completed': '완료',
+  'subagent.lines': '{count}줄',
+  'lang.change': '언어 변경',
+
   'task.headerDuration': '소요시간',
   'task.headerTokens': '토큰',
   'task.estimated': '≈ 추정',

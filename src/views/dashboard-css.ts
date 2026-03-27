@@ -1134,6 +1134,19 @@ body {
 .cfm-search:focus-within {
   border-color: var(--cfm-border-active);
 }
+.cfm-lang-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: var(--cfm-radius-sm);
+  transition: background var(--cfm-transition-fast);
+  flex-shrink: 0;
+}
+.cfm-lang-btn:hover {
+  background: var(--cfm-bg-hover);
+}
 
 /* === 27. 반응형 업데이트 (Phase 2) === */
 @container dashboard (max-width: 400px) {
