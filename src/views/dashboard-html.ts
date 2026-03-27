@@ -28,7 +28,21 @@ export function getDashboardHtml(nonce: string): string {
     <div class="cfm-search" id="search-bar">
       <span class="cfm-search-icon">&#x1F50D;</span>
       <input type="text" class="cfm-search-input" id="search-input" autocomplete="off" spellcheck="false">
-      <button class="cfm-lang-btn" id="lang-btn" title="Change Language">&#x1F310;</button>
+      <select class="cfm-lang-select" id="lang-select">
+        <option value="ko">한국어</option>
+        <option value="en">English</option>
+        <option value="ja">日本語</option>
+        <option value="zh">中文</option>
+      </select>
+    </div>
+
+    <!-- 토큰 사용량 요약 바 -->
+    <div class="cfm-token-summary" id="token-summary">
+      <span class="cfm-token-item" style="color:#2196f3"><span id="ts-input">0</span> in</span>
+      <span class="cfm-token-item" style="color:#4caf50"><span id="ts-output">0</span> out</span>
+      <span class="cfm-token-item" style="color:#ff9800"><span id="ts-cache">0</span> cache</span>
+      <span class="cfm-token-sep">|</span>
+      <span class="cfm-token-item cfm-token-total"><span id="ts-total">0</span> total</span>
     </div>
 
     <!-- 탭 네비게이션 -->

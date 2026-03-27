@@ -148,7 +148,11 @@ export class DashboardProvider implements vscode.Disposable {
         break;
 
       case 'changeLanguage':
-        this.i18nService.cycleLocale();
+        if (msg.locale) {
+          this.i18nService.setLocale(msg.locale);
+        } else {
+          this.i18nService.cycleLocale();
+        }
         break;
 
       case 'refresh':

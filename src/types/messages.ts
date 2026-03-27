@@ -11,7 +11,7 @@ export type WebToExtMessage =
   | { type: 'selectTeam'; teamName: string }
   | { type: 'refresh' }
   | { type: 'changeTab'; tab: TabName }
-  | { type: 'changeLanguage' }
+  | { type: 'changeLanguage'; locale?: string }
   | { type: 'changeTab'; tab: TabName };
 
 /** 스냅샷 페이로드 (직렬화용) */

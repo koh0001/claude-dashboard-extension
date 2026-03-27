@@ -1134,19 +1134,38 @@ body {
 .cfm-search:focus-within {
   border-color: var(--cfm-border-active);
 }
-.cfm-lang-btn {
-  background: none;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-  padding: 2px 4px;
+.cfm-lang-select {
+  background: var(--cfm-bg-input);
+  border: 1px solid var(--cfm-border-input);
+  color: var(--cfm-text-primary);
+  font-size: var(--cfm-font-size-xs);
+  font-family: var(--cfm-font-family);
+  padding: 2px 6px;
   border-radius: var(--cfm-radius-sm);
-  transition: background var(--cfm-transition-fast);
+  cursor: pointer;
   flex-shrink: 0;
+  outline: none;
 }
-.cfm-lang-btn:hover {
-  background: var(--cfm-bg-hover);
+.cfm-lang-select:focus {
+  border-color: var(--cfm-border-active);
 }
+
+/* === 토큰 사용량 요약 바 === */
+.cfm-token-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--cfm-space-sm);
+  padding: 4px var(--cfm-space-sm);
+  font-size: var(--cfm-font-size-xs);
+  color: var(--cfm-text-muted);
+  background: var(--cfm-overlay-subtle);
+  border-radius: var(--cfm-radius-sm);
+  margin-bottom: var(--cfm-space-sm);
+}
+.cfm-token-item { font-family: var(--cfm-font-mono); }
+.cfm-token-item span { font-weight: var(--cfm-font-weight-bold); }
+.cfm-token-total { color: var(--cfm-text-primary); }
+.cfm-token-sep { color: var(--cfm-text-muted); opacity: 0.3; }
 
 /* === 27. 반응형 업데이트 (Phase 2) === */
 @container dashboard (max-width: 400px) {

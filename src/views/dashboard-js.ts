@@ -596,6 +596,9 @@ export function getDashboardJs(): string {
         sessions[sa.sessionId].push(sa);
       });
 
+      var wrapper = document.createElement('div');
+      wrapper.className = 'cfm-dag-wrapper';
+
       var grid = document.createElement('div');
       grid.className = 'cfm-deps-graph';
 
@@ -607,6 +610,7 @@ export function getDashboardJs(): string {
       mainTitle.textContent = 'Main Session';
       mainCol.appendChild(mainTitle);
 
+      var sessionNodes = {};
       Object.keys(sessions).forEach(function(sid) {
         var node = document.createElement('div');
         node.className = 'cfm-deps-node';
@@ -620,6 +624,7 @@ export function getDashboardJs(): string {
         titleSpan.textContent = sessions[sid].length + ' agents';
         node.appendChild(titleSpan);
         mainCol.appendChild(node);
+        sessionNodes[sid] = node;
       });
       grid.appendChild(mainCol);
 
@@ -631,6 +636,7 @@ export function getDashboardJs(): string {
       agentTitle.textContent = t('subagent.title');
       agentCol.appendChild(agentTitle);
 
+      var agentNodes = {};
       state.subagents.forEach(function(sa) {
         var node = document.createElement('div');
         node.className = 'cfm-deps-node';
@@ -644,10 +650,51 @@ export function getDashboardJs(): string {
         titleSpan.textContent = escapeHtml(sa.description.slice(0, 25));
         node.appendChild(titleSpan);
         agentCol.appendChild(node);
+        agentNodes[sa.id] = node;
       });
       grid.appendChild(agentCol);
 
-      panel.appendChild(grid);
+      // SVG 연결선 컨테이너
+      var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('class', 'cfm-dag-svg');
+      wrapper.appendChild(grid);
+      wrapper.appendChild(svg);
+      panel.appendChild(wrapper);
+
+      // 레이아웃 후 실제 DOM 위치 기반 연결선
+      requestAnimationFrame(function() {
+        var wrapperRect = wrapper.getBoundingClientRect();
+        svg.setAttribute('width', String(wrapper.scrollWidth));
+        svg.setAttribute('height', String(wrapper.scrollHeight));
+
+        state.subagents.forEach(function(sa) {
+          var fromEl = sessionNodes[sa.sessionId];
+          var toEl = agentNodes[sa.id];
+          if (!fromEl || !toEl) return;
+
+          var fromRect = fromEl.getBoundingClientRect();
+          var toRect = toEl.getBoundingClientRect();
+
+          var x1 = fromRect.right - wrapperRect.left;
+          var y1 = fromRect.top + fromRect.height / 2 - wrapperRect.top;
+          var x2 = toRect.left - wrapperRect.left;
+          var y2 = toRect.top + toRect.height / 2 - wrapperRect.top;
+
+          var midX = (x1 + x2) / 2;
+          var d = 'M ' + x1 + ' ' + y1 + ' C ' + midX + ' ' + y1 + ', ' + midX + ' ' + y2 + ', ' + x2 + ' ' + y2;
+
+          var line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          line.setAttribute('d', d);
+          line.setAttribute('class', 'cfm-dag-edge');
+          svg.appendChild(line);
+
+          var arrow = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+          arrow.setAttribute('points',
+            (x2 - 8) + ',' + (y2 - 4) + ' ' + x2 + ',' + y2 + ' ' + (x2 - 8) + ',' + (y2 + 4));
+          arrow.setAttribute('class', 'cfm-dag-arrow');
+          svg.appendChild(arrow);
+        });
+      });
       return;
     }
 
@@ -1201,6 +1248,24 @@ export function getDashboardJs(): string {
     return text.toLowerCase().indexOf(state.searchQuery.toLowerCase()) !== -1;
   }
 
+  function formatTokenShort(n) {
+    if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+    if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+    return String(n);
+  }
+
+  function updateTokenSummary(usage) {
+    var el;
+    el = document.getElementById('ts-input');
+    if (el) el.textContent = formatTokenShort(usage.inputTokens);
+    el = document.getElementById('ts-output');
+    if (el) el.textContent = formatTokenShort(usage.outputTokens);
+    el = document.getElementById('ts-cache');
+    if (el) el.textContent = formatTokenShort(usage.cacheCreationTokens + usage.cacheReadTokens);
+    el = document.getElementById('ts-total');
+    if (el) el.textContent = formatTokenShort(usage.totalTokens);
+  }
+
   // --- Empty State ---
   function renderEmpty(container, messageKey, hintKey) {
     var div = document.createElement('div');
@@ -1244,6 +1309,8 @@ export function getDashboardJs(): string {
       case 'translationsUpdate':
         state.translations = msg.translations || {};
         state.locale = msg.locale || 'ko';
+        var ls = document.getElementById('lang-select');
+        if (ls) ls.value = state.locale;
         renderAll();
         break;
       case 'activityUpdate':
@@ -1268,6 +1335,7 @@ export function getDashboardJs(): string {
       case 'tokenUpdate':
         if (msg.usage) {
           state.tokenUsage = msg.usage;
+          updateTokenSummary(msg.usage);
           if (state.currentTab === 'metrics') renderMetrics(getSnap());
         }
         break;
@@ -1318,11 +1386,12 @@ export function getDashboardJs(): string {
       });
     }
 
-    // 언어 변경 버튼
-    var langBtn = document.getElementById('lang-btn');
-    if (langBtn) {
-      langBtn.addEventListener('click', function() {
-        vscode.postMessage({ type: 'changeLanguage' });
+    // 언어 변경 드롭다운
+    var langSelect = document.getElementById('lang-select');
+    if (langSelect) {
+      langSelect.value = state.locale;
+      langSelect.addEventListener('change', function() {
+        vscode.postMessage({ type: 'changeLanguage', locale: langSelect.value });
       });
     }
 
