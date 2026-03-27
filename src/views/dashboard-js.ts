@@ -1126,6 +1126,66 @@ export function getDashboardJs(): string {
     tokenTitle.style.margin = 'var(--cfm-space-lg) 0 var(--cfm-space-sm)';
     panel.appendChild(tokenTitle);
 
+    // 토큰 도넛 차트 (비율 시각화)
+    if (tk.totalTokens > 0) {
+      var tokenChartWrap = document.createElement('div');
+      tokenChartWrap.className = 'cfm-token-chart-wrap';
+
+      var donutSize = 120;
+      var donutSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      donutSvg.setAttribute('viewBox', '0 0 36 36');
+      donutSvg.setAttribute('width', String(donutSize));
+      donutSvg.setAttribute('height', String(donutSize));
+      donutSvg.setAttribute('class', 'cfm-donut-svg');
+
+      var trackCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      trackCircle.setAttribute('cx', '18'); trackCircle.setAttribute('cy', '18'); trackCircle.setAttribute('r', '15.9155');
+      trackCircle.setAttribute('class', 'cfm-donut-track');
+      donutSvg.appendChild(trackCircle);
+
+      var tokenParts = [
+        { value: tk.inputTokens, color: '#2196f3' },
+        { value: tk.outputTokens, color: '#4caf50' },
+        { value: tk.cacheCreationTokens, color: '#ff9800' },
+        { value: tk.cacheReadTokens, color: '#9c27b0' },
+      ];
+      var offset = 0;
+      tokenParts.forEach(function(part) {
+        if (part.value <= 0) return;
+        var pct = (part.value / tk.totalTokens) * 100;
+        var arc = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        arc.setAttribute('cx', '18'); arc.setAttribute('cy', '18'); arc.setAttribute('r', '15.9155');
+        arc.setAttribute('fill', 'none');
+        arc.setAttribute('stroke', part.color);
+        arc.setAttribute('stroke-width', '3.5');
+        arc.setAttribute('stroke-dasharray', pct + ' ' + (100 - pct));
+        arc.setAttribute('stroke-dashoffset', String(-offset));
+        arc.setAttribute('stroke-linecap', 'round');
+        donutSvg.appendChild(arc);
+        offset += pct;
+      });
+
+      tokenChartWrap.appendChild(donutSvg);
+
+      // 범례
+      var legend = document.createElement('div');
+      legend.className = 'cfm-token-legend';
+      tokenParts.forEach(function(part, i) {
+        var labels = [t('token.input'), t('token.output'), t('token.cacheCreate'), t('token.cacheRead')];
+        if (part.value <= 0) return;
+        var item = document.createElement('span');
+        item.className = 'cfm-token-legend-item';
+        var dot = document.createElement('span');
+        dot.className = 'cfm-token-legend-dot';
+        dot.style.background = part.color;
+        item.appendChild(dot);
+        item.appendChild(document.createTextNode(labels[i] + ' ' + Math.round((part.value / tk.totalTokens) * 100) + '%'));
+        legend.appendChild(item);
+      });
+      tokenChartWrap.appendChild(legend);
+      panel.appendChild(tokenChartWrap);
+    }
+
     var tokenGrid = document.createElement('div');
     tokenGrid.className = 'cfm-metrics-grid';
 
@@ -1270,6 +1330,26 @@ export function getDashboardJs(): string {
     if (el) el.textContent = formatTokenShort(usage.cacheCreationTokens + usage.cacheReadTokens);
     el = document.getElementById('ts-total');
     if (el) el.textContent = formatTokenShort(usage.totalTokens);
+
+    // 상단 비율 바 그래프 업데이트
+    var barEl = document.getElementById('ts-ratio-bar');
+    if (barEl && usage.totalTokens > 0) {
+      barEl.textContent = '';
+      var parts = [
+        { pct: (usage.inputTokens / usage.totalTokens) * 100, color: '#2196f3' },
+        { pct: (usage.outputTokens / usage.totalTokens) * 100, color: '#4caf50' },
+        { pct: (usage.cacheCreationTokens / usage.totalTokens) * 100, color: '#ff9800' },
+        { pct: (usage.cacheReadTokens / usage.totalTokens) * 100, color: '#9c27b0' },
+      ];
+      parts.forEach(function(p) {
+        if (p.pct > 0) {
+          var seg = document.createElement('div');
+          seg.style.width = p.pct + '%';
+          seg.style.background = p.color;
+          barEl.appendChild(seg);
+        }
+      });
+    }
   }
 
   // --- Empty State ---

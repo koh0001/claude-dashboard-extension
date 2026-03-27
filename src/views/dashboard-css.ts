@@ -1170,6 +1170,46 @@ body {
 .cfm-token-item span { font-weight: var(--cfm-font-weight-bold); }
 .cfm-token-total { color: var(--cfm-text-primary); }
 .cfm-token-sep { color: var(--cfm-text-muted); opacity: 0.3; }
+.cfm-token-chart-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--cfm-space-lg);
+  padding: var(--cfm-space-md);
+  background: var(--cfm-overlay-subtle);
+  border-radius: var(--cfm-radius-md);
+  border: 1px solid var(--cfm-border-default);
+  margin-bottom: var(--cfm-space-md);
+}
+.cfm-token-legend {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cfm-space-xs);
+  font-size: var(--cfm-font-size-xs);
+  color: var(--cfm-text-secondary);
+}
+.cfm-token-legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--cfm-space-xs);
+}
+.cfm-token-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.cfm-token-summary-bar {
+  display: flex;
+  height: 4px;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 4px;
+  width: 100%;
+}
+.cfm-token-summary-bar > div {
+  height: 100%;
+  min-width: 1px;
+}
 
 /* === 27. 반응형 업데이트 (Phase 2) === */
 @container dashboard (max-width: 400px) {

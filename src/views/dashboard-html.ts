@@ -44,6 +44,7 @@ export function getDashboardHtml(nonce: string): string {
       <span class="cfm-token-sep">|</span>
       <span class="cfm-token-item cfm-token-total"><span id="ts-total">0</span> total</span>
     </div>
+    <div class="cfm-token-summary-bar" id="ts-ratio-bar"></div>
 
     <!-- 탭 네비게이션 -->
     <div class="cfm-tabs" role="tablist" aria-label="Dashboard tabs">
