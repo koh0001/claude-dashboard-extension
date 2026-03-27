@@ -1277,105 +1277,6 @@ export function getDashboardJs(): string {
     return String(n);
   }
 
-  // 세션 시작 시간 기록 (첫 토큰 수신 시)
-  var sessionStartTime = null;
-  var RESET_INTERVAL_MS = 5 * 60 * 60 * 1000; // 5시간
-
-  function updateTokenSummary(usage) {
-    // 세션 시작 시간 기록
-    if (!sessionStartTime && usage.totalTokens > 0) {
-      sessionStartTime = Date.now();
-    }
-
-    // 텍스트 업데이트
-    var el;
-    el = document.getElementById('ts-input');
-    if (el) el.textContent = formatTokenShort(usage.inputTokens);
-    el = document.getElementById('ts-output');
-    if (el) el.textContent = formatTokenShort(usage.outputTokens);
-    el = document.getElementById('ts-cache');
-    if (el) el.textContent = formatTokenShort(usage.cacheCreationTokens + usage.cacheReadTokens);
-    el = document.getElementById('ts-total');
-    if (el) el.textContent = formatTokenShort(usage.totalTokens);
-
-    // 도넛 차트 업데이트
-    var donutSvg = document.getElementById('ts-donut');
-    if (donutSvg && usage.totalTokens > 0) {
-      // 기존 arc 제거 (track 유지)
-      var arcs = donutSvg.querySelectorAll('.ts-arc');
-      arcs.forEach(function(a) { a.remove(); });
-
-      var tokenParts = [
-        { value: usage.inputTokens, color: '#2196f3' },
-        { value: usage.outputTokens, color: '#4caf50' },
-        { value: usage.cacheCreationTokens + usage.cacheReadTokens, color: '#ff9800' },
-      ];
-      var offset = 0;
-      tokenParts.forEach(function(part) {
-        if (part.value <= 0) return;
-        var pct = (part.value / usage.totalTokens) * 100;
-        var arc = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        arc.setAttribute('cx', '18'); arc.setAttribute('cy', '18'); arc.setAttribute('r', '15.9');
-        arc.setAttribute('fill', 'none');
-        arc.setAttribute('stroke', part.color);
-        arc.setAttribute('stroke-width', '3');
-        arc.setAttribute('stroke-dasharray', pct + ' ' + (100 - pct));
-        arc.setAttribute('stroke-dashoffset', String(-offset));
-        arc.setAttribute('class', 'ts-arc');
-        donutSvg.appendChild(arc);
-        offset += pct;
-      });
-
-      // 퍼센트 표시 (입력+출력 비율)
-      var ioRatio = Math.round(((usage.inputTokens + usage.outputTokens) / usage.totalTokens) * 100);
-      el = document.getElementById('ts-pct');
-      if (el) el.textContent = ioRatio + '%';
-    }
-
-    // 비율 바 업데이트
-    var barEl = document.getElementById('ts-ratio-bar');
-    if (barEl && usage.totalTokens > 0) {
-      barEl.textContent = '';
-      var parts = [
-        { pct: (usage.inputTokens / usage.totalTokens) * 100, color: '#2196f3' },
-        { pct: (usage.outputTokens / usage.totalTokens) * 100, color: '#4caf50' },
-        { pct: ((usage.cacheCreationTokens + usage.cacheReadTokens) / usage.totalTokens) * 100, color: '#ff9800' },
-      ];
-      parts.forEach(function(p) {
-        if (p.pct > 0) {
-          var seg = document.createElement('div');
-          seg.style.width = p.pct + '%';
-          seg.style.background = p.color;
-          barEl.appendChild(seg);
-        }
-      });
-    }
-
-    // 리셋 타이머 업데이트
-    updateResetTimer();
-  }
-
-  function updateResetTimer() {
-    var resetEl = document.getElementById('ts-reset');
-    if (!resetEl || !sessionStartTime) return;
-    var elapsed = Date.now() - sessionStartTime;
-    var remaining = Math.max(0, RESET_INTERVAL_MS - elapsed);
-    var h = Math.floor(remaining / 3600000);
-    var m = Math.floor((remaining % 3600000) / 60000);
-    var s = Math.floor((remaining % 60000) / 1000);
-    resetEl.textContent = '\\u23F1 ' + h + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
-    if (remaining <= 0) {
-      resetEl.textContent = '\\u23F1 reset!';
-      resetEl.style.color = '#4caf50';
-    }
-  }
-
-  // 리셋 타이머 1초 간격 업데이트 (WebView 종료 시 정리)
-  var resetInterval = setInterval(updateResetTimer, 1000);
-  window.addEventListener('beforeunload', function() {
-    clearInterval(resetInterval);
-  });
-
   // --- Empty State ---
   function renderEmpty(container, messageKey, hintKey) {
     var div = document.createElement('div');
@@ -1445,7 +1346,6 @@ export function getDashboardJs(): string {
       case 'tokenUpdate':
         if (msg.usage) {
           state.tokenUsage = msg.usage;
-          updateTokenSummary(msg.usage);
           if (state.currentTab === 'metrics') renderMetrics(getSnap());
         }
         break;

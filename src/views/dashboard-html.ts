@@ -36,29 +36,6 @@ export function getDashboardHtml(nonce: string): string {
       </select>
     </div>
 
-    <!-- 토큰 사용량 패널 -->
-    <div class="cfm-token-panel" id="token-panel">
-      <div class="cfm-token-panel-left">
-        <svg id="ts-donut" viewBox="0 0 36 36" width="48" height="48" class="cfm-donut-svg">
-          <circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--cfm-overlay-medium)" stroke-width="3"/>
-        </svg>
-        <div class="cfm-token-panel-pct" id="ts-pct">0%</div>
-      </div>
-      <div class="cfm-token-panel-center">
-        <div class="cfm-token-panel-total">total <span id="ts-total">0</span></div>
-        <div class="cfm-token-panel-bar" id="ts-ratio-bar"></div>
-        <div class="cfm-token-panel-legend">
-          <span class="cfm-tl-item"><span class="cfm-tl-dot" style="background:#2196f3"></span>in <span id="ts-input">0</span></span>
-          <span class="cfm-tl-item"><span class="cfm-tl-dot" style="background:#4caf50"></span>out <span id="ts-output">0</span></span>
-          <span class="cfm-tl-item"><span class="cfm-tl-dot" style="background:#ff9800"></span>cache <span id="ts-cache">0</span></span>
-        </div>
-      </div>
-      <div class="cfm-token-panel-right">
-        <div class="cfm-token-reset" id="ts-reset">&#x23F1; --:--</div>
-        <div class="cfm-token-reset-label">reset</div>
-      </div>
-    </div>
-
     <!-- 탭 네비게이션 -->
     <div class="cfm-tabs" role="tablist" aria-label="Dashboard tabs">
       <button role="tab" class="cfm-tab" data-tab="overview" aria-selected="true" aria-controls="panel-overview" id="tab-overview"></button>

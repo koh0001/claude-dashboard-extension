@@ -45,6 +45,7 @@ interface ProjectStats {
 export class SessionParserService implements vscode.Disposable {
   private watchers: fs.FSWatcher[] = [];
   private knownLines = new Map<string, number>(); // 파일별 읽은 줄 수
+  private knownSizes = new Map<string, number>(); // 파일별 마지막 읽은 크기 (대용량 추적)
   private disposables: vscode.Disposable[] = [];
   private statsPath: string | null = null;
   private statsLoaded = false; // stats에서 토큰 복원 여부
@@ -189,38 +190,52 @@ export class SessionParserService implements vscode.Disposable {
     }
   }
 
-  /** JSONL 파일 파싱 (대용량 파일은 끝부분만 읽기) */
+  /** JSONL 파일 파싱 (대용량 파일은 새로 추가된 부분만 읽기) */
   parseFile(filePath: string): ActivityItem[] {
     const items: ActivityItem[] = [];
     try {
       const stat = fs.statSync(filePath);
-      const MAX_READ_BYTES = 512 * 1024; // 최대 512KB만 읽기
+      const lastSize = this.knownSizes.get(filePath) || 0;
+
+      // 파일이 변경되지 않았으면 스킵
+      if (lastSize > 0 && stat.size <= lastSize) return items;
 
       let content: string;
-      if (stat.size > MAX_READ_BYTES) {
-        // 대용량: 파일 끝 512KB만 읽기
+      if (lastSize > 0 && stat.size > lastSize) {
+        // 증분 읽기: 마지막 읽은 위치부터 새로 추가된 부분만
+        const newBytes = stat.size - lastSize;
         const fd = fs.openSync(filePath, 'r');
-        const buf = Buffer.alloc(MAX_READ_BYTES);
-        fs.readSync(fd, buf, 0, MAX_READ_BYTES, stat.size - MAX_READ_BYTES);
+        const buf = Buffer.alloc(newBytes);
+        fs.readSync(fd, buf, 0, newBytes, lastSize);
+        fs.closeSync(fd);
+        content = buf.toString('utf-8');
+      } else if (stat.size > 512 * 1024) {
+        // 초기 읽기: 대용량 파일은 끝 512KB만
+        const MAX_READ = 512 * 1024;
+        const fd = fs.openSync(filePath, 'r');
+        const buf = Buffer.alloc(MAX_READ);
+        fs.readSync(fd, buf, 0, MAX_READ, stat.size - MAX_READ);
         fs.closeSync(fd);
         content = buf.toString('utf-8');
         // 첫 줄은 잘렸을 수 있으므로 제거
         const firstNewline = content.indexOf('\n');
         if (firstNewline > 0) content = content.slice(firstNewline + 1);
-        // 이 파일은 이미 부분 읽기 완료로 표시
-        this.knownLines.set(filePath, -1);
       } else {
+        // 소용량: 전체 읽기
         content = fs.readFileSync(filePath, 'utf-8');
       }
 
+      // 현재 파일 크기 기록
+      this.knownSizes.set(filePath, stat.size);
+
       const lines = content.split('\n').filter(Boolean);
-      const startLine = this.knownLines.get(filePath) || 0;
-      const actualStart = startLine === -1 ? 0 : startLine;
-      if (startLine !== -1) {
+      // 소용량 파일의 줄 기반 추적 (기존 호환)
+      const startLine = (lastSize > 0) ? 0 : (this.knownLines.get(filePath) || 0);
+      if (lastSize === 0) {
         this.knownLines.set(filePath, lines.length);
       }
 
-      for (let i = actualStart; i < lines.length; i++) {
+      for (let i = startLine; i < lines.length; i++) {
         const item = this.parseLine(lines[i], filePath, i);
         if (item) items.push(item);
       }
