@@ -42,7 +42,7 @@ export function getDashboardHtml(nonce: string): string {
       <span class="cfm-token-item" style="color:#4caf50"><span id="ts-output">0</span> out</span>
       <span class="cfm-token-item" style="color:#ff9800"><span id="ts-cache">0</span> cache</span>
       <span class="cfm-token-sep">|</span>
-      <span class="cfm-token-item cfm-token-total"><span id="ts-total">0</span> total</span>
+      <span class="cfm-token-item cfm-token-total">total <span id="ts-total">0</span></span>
     </div>
     <div class="cfm-token-summary-bar" id="ts-ratio-bar"></div>
 
