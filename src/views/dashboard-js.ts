@@ -505,7 +505,23 @@ export function getDashboardJs(): string {
     var panel = document.getElementById('panel-messages');
     if (!panel) return;
     panel.textContent = '';
-    if (!snap || snap.messages.length === 0) { renderEmpty(panel, 'empty.noMessages', 'empty.noMessagesHint'); return; }
+
+    // 서브에이전트 프롬프트를 가상 메시지로 변환
+    var virtualMsgs = state.subagents.filter(function(sa) { return sa.prompt; }).map(function(sa) {
+      var baseType = sa.agentType.replace('oh-my-claudecode:', '');
+      return {
+        from: 'main',
+        to: baseType,
+        content: sa.prompt || sa.description,
+        timestamp: Date.now(),
+        type: 'system'
+      };
+    });
+
+    var allMessages = snap ? snap.messages.concat(virtualMsgs) : virtualMsgs;
+    if (allMessages.length === 0) { renderEmpty(panel, 'empty.noMessages', 'empty.noMessagesHint'); return; }
+    // snap이 없으면 가상 snap 생성
+    if (!snap) { snap = { messages: virtualMsgs }; }
 
     // 필터 버튼
     var filters = document.createElement('div');
@@ -528,7 +544,7 @@ export function getDashboardJs(): string {
     var list = document.createElement('div');
     list.className = 'cfm-message-list';
 
-    var msgs = snap.messages;
+    var msgs = allMessages;
     if (state.messageFilter !== 'all') {
       msgs = msgs.filter(function(m) { return m.type === state.messageFilter; });
     }
@@ -565,6 +581,76 @@ export function getDashboardJs(): string {
     var panel = document.getElementById('panel-deps');
     if (!panel) return;
     panel.textContent = '';
+
+    // 서브에이전트 의존성 그래프 (세션별 그룹)
+    if (state.subagents.length > 0 && (!snap || !snap.depsLayers || snap.depsLayers.length === 0)) {
+      var title = document.createElement('h3');
+      title.textContent = t('subagent.title') + ' — ' + t('deps.sectionTitle');
+      title.style.marginBottom = 'var(--cfm-space-sm)';
+      panel.appendChild(title);
+
+      // 세션별 그룹핑
+      var sessions = {};
+      state.subagents.forEach(function(sa) {
+        if (!sessions[sa.sessionId]) sessions[sa.sessionId] = [];
+        sessions[sa.sessionId].push(sa);
+      });
+
+      var grid = document.createElement('div');
+      grid.className = 'cfm-deps-graph';
+
+      // 메인 세션 노드
+      var mainCol = document.createElement('div');
+      mainCol.className = 'cfm-deps-layer';
+      var mainTitle = document.createElement('div');
+      mainTitle.className = 'cfm-deps-layer-title';
+      mainTitle.textContent = 'Main Session';
+      mainCol.appendChild(mainTitle);
+
+      Object.keys(sessions).forEach(function(sid) {
+        var node = document.createElement('div');
+        node.className = 'cfm-deps-node';
+        node.setAttribute('data-status', 'in_progress');
+        var idSpan = document.createElement('span');
+        idSpan.className = 'cfm-deps-node-id';
+        idSpan.textContent = sid.slice(0, 8) + '...';
+        node.appendChild(idSpan);
+        var titleSpan = document.createElement('span');
+        titleSpan.className = 'cfm-deps-node-title';
+        titleSpan.textContent = sessions[sid].length + ' agents';
+        node.appendChild(titleSpan);
+        mainCol.appendChild(node);
+      });
+      grid.appendChild(mainCol);
+
+      // 서브에이전트 노드
+      var agentCol = document.createElement('div');
+      agentCol.className = 'cfm-deps-layer';
+      var agentTitle = document.createElement('div');
+      agentTitle.className = 'cfm-deps-layer-title';
+      agentTitle.textContent = t('subagent.title');
+      agentCol.appendChild(agentTitle);
+
+      state.subagents.forEach(function(sa) {
+        var node = document.createElement('div');
+        node.className = 'cfm-deps-node';
+        node.setAttribute('data-status', sa.status === 'active' ? 'in_progress' : 'completed');
+        var idSpan = document.createElement('span');
+        idSpan.className = 'cfm-deps-node-id';
+        idSpan.textContent = sa.agentType.replace('oh-my-claudecode:', '');
+        node.appendChild(idSpan);
+        var titleSpan = document.createElement('span');
+        titleSpan.className = 'cfm-deps-node-title';
+        titleSpan.textContent = escapeHtml(sa.description.slice(0, 25));
+        node.appendChild(titleSpan);
+        agentCol.appendChild(node);
+      });
+      grid.appendChild(agentCol);
+
+      panel.appendChild(grid);
+      return;
+    }
+
     if (!snap || !snap.depsLayers || snap.depsLayers.length === 0) {
       renderEmpty(panel, 'empty.noDeps', 'empty.noDepsHint');
       return;

@@ -341,6 +341,8 @@ export class SessionParserService implements vscode.Disposable {
             let lineCount = 0;
             let status: 'active' | 'completed' = 'completed';
 
+            let prompt: string | undefined;
+
             if (fs.existsSync(jsonlPath)) {
               const stat = fs.statSync(jsonlPath);
               // 대략적 줄 수 추정 (평균 줄 길이 ~500바이트)
@@ -349,6 +351,27 @@ export class SessionParserService implements vscode.Disposable {
               if (Date.now() - stat.mtimeMs < 30000) {
                 status = 'active';
               }
+              // 첫 user 메시지 추출 (프롬프트, 최대 4KB만 읽기)
+              try {
+                const fd = fs.openSync(jsonlPath, 'r');
+                const buf = Buffer.alloc(4096);
+                fs.readSync(fd, buf, 0, 4096, 0);
+                fs.closeSync(fd);
+                const head = buf.toString('utf-8');
+                for (const line of head.split('\n')) {
+                  if (!line) continue;
+                  const entry = JSON.parse(line);
+                  if (entry.type === 'user') {
+                    const c = entry.message?.content;
+                    if (typeof c === 'string') { prompt = c.slice(0, 200); }
+                    else if (Array.isArray(c)) {
+                      const textBlock = c.find((b: Record<string, unknown>) => b.type === 'text');
+                      if (textBlock) prompt = String(textBlock.text || '').slice(0, 200);
+                    }
+                    break;
+                  }
+                }
+              } catch { /* 프롬프트 추출 실패 무시 */ }
             }
 
             agents.push({
@@ -358,6 +381,7 @@ export class SessionParserService implements vscode.Disposable {
               status,
               sessionId: entry.name,
               lineCount,
+              prompt,
             });
           } catch {
             // 개별 meta.json 파싱 실패 무시

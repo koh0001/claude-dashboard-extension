@@ -93,6 +93,7 @@ export interface SubagentInfo {
   status: 'active' | 'completed';
   sessionId: string;
   lineCount: number;
+  prompt?: string;
 }
 
 /** 토큰 사용량 */

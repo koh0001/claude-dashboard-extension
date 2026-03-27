@@ -97,7 +97,7 @@
     "viewsWelcome": [
       {
         "view": "claudeFlowMonitor.teamTree",
-        "contents": "Claude Flow Monitor\n\n대시보드를 열어 Claude Code 활동을 모니터링하세요.\n\n[Open Dashboard](command:claudeFlowMonitor.openDashboard)\n\n[Export Report](command:claudeFlowMonitor.exportReport)"
+        "contents": "Agent Teams가 활성화되면 여기에 표시됩니다."
       }
     ],
     "menus": {
